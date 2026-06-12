@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from db import ArtistRecord
+from db.models import ArtistRecord
 
 
 @dataclass
