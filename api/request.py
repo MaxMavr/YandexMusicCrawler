@@ -6,7 +6,7 @@ HEADERS = {
 DEFAULT_TIMEOUT = 5
 
 
-class YandexRequest:
+class Request:
     def __init__(self, token: str, language: str = 'ru'):
         self.headers = {
             **HEADERS,
