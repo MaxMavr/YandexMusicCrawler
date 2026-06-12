@@ -1,6 +1,6 @@
 <h1 align="center">Yandex Music Crawler</h1>
 <p align="center">
-За пределами алгоритмов рекомендаций
+За пределами вашей волны
 </p>
 <p align="center">
 <img src="https://img.shields.io/badge/made%20by-MaxMavr-DDDDDD" >
