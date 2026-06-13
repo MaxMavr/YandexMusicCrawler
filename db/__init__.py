@@ -29,7 +29,7 @@ class Repository:
                     CREATE TABLE IF NOT EXISTS artists (
                         id INTEGER PRIMARY KEY,
                         name TEXT NOT NULL,
-                        available BOOLEAN NOT NULL,
+                        is_available BOOLEAN NOT NULL,
 
                         last_month_listeners INTEGER NOT NULL,
                         last_month_listeners_delta INTEGER NOT NULL,
@@ -41,7 +41,9 @@ class Repository:
                         ratings_month INTEGER NOT NULL,
                         ratings_week INTEGER NOT NULL,
                         
-                        date_recording TIMESTAMP NOT NULL
+                        date_recording TIMESTAMP NOT NULL,
+                        
+                        is_listened BOOLEAN NOT NULL
                     )
                 """)
 
@@ -90,26 +92,28 @@ class Repository:
                         date_recording,
                         last_month_listeners,
                         last_month_listeners_delta,
-                        available,
+                        is_available,
                         name,
                         tracks_count,
                         likes_count,
                         ratings_day,
                         ratings_month,
-                        ratings_week
+                        ratings_week,
+                        is_listened
                     )
-                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     artist.id,
                     artist.last_month_listeners,
                     artist.last_month_listeners_delta,
-                    artist.available,
+                    artist.is_available,
                     artist.name,
                     artist.tracks_count,
                     artist.likes_count,
                     artist.ratings_day,
                     artist.ratings_month,
                     artist.ratings_week,
+                    False,
                 ))
 
                 for genre in artist.genres:
@@ -155,31 +159,28 @@ class Repository:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    UPDATE artists (
-                        id,
-                        date_recording,
-                        last_month_listeners,
-                        last_month_listeners_delta,
-                        available,
-                        name,
-                        tracks_count,
-                        likes_count,
-                        ratings_day,
-                        ratings_month,
-                        ratings_week
-                    )
-                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    UPDATE artists
+                    SET 
+                        date_recording = NOW(),
+                        last_month_listeners = %s,
+                        last_month_listeners_delta = %s,
+                        is_available = %s,
+                        tracks_count = %s,
+                        likes_count = %s,
+                        ratings_day = %s,
+                        ratings_month = %s,
+                        ratings_week = %s
+                    WHERE id = %s
                 """, (
-                    artist.id,
                     artist.last_month_listeners,
                     artist.last_month_listeners_delta,
-                    artist.available,
-                    artist.name,
+                    artist.is_available,
                     artist.tracks_count,
                     artist.likes_count,
                     artist.ratings_day,
                     artist.ratings_month,
                     artist.ratings_week,
+                    artist.id,
                 ))
 
                 cur.execute("""
@@ -269,7 +270,7 @@ class Repository:
                     last_month_listeners_delta=row["last_month_listeners_delta"],
 
                     id=row["id"],
-                    available=row["available"],
+                    is_available=row["is_available"],
                     name=row["name"],
 
                     genres=genres,

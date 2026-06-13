@@ -7,7 +7,7 @@ class ArtistRecord:
     last_month_listeners_delta: int
 
     id: int
-    available: bool
+    is_available: bool
     name: str
 
     genres: list[str]

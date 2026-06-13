@@ -11,7 +11,7 @@ def _parse(artist_data: dict) -> ArtistGetResult:
     _artist = result.get('artist')
 
     idx = _artist.get('id')
-    available = _artist.get('available')
+    is_available = _artist.get('available', False)
     name = _artist.get('name')
 
     genres = _artist.get('genres', [])
@@ -43,7 +43,7 @@ def _parse(artist_data: dict) -> ArtistGetResult:
             last_month_listeners=last_month_listeners,
             last_month_listeners_delta=last_month_listeners_delta,
             id=idx,
-            available=available,
+            is_available=is_available,
             name=name,
             genres=genres,
             countries=countries,
