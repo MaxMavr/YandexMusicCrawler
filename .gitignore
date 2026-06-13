@@ -1,6 +1,7 @@
 # Environment files
 .env
 artists.db
+temp/
 junk/
 venv/
 .idea/

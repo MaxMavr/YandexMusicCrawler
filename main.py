@@ -1,19 +1,19 @@
-from os import getenv
 from time import sleep
 
-from dotenv import load_dotenv
-
+from api.artist import ApiClient
 from api.request import Request
+from config import POSTGRESQL_PASSWORD, YANDEX_TOKEN, API_RATE
 from crawler import Crawler
-from api.artist import ArtistApiClient
+from db import Repository
+from utils.rate_limiter import RateLimiter
 
-load_dotenv()
+_api = Request(YANDEX_TOKEN)
+repository = Repository(database="music", password=POSTGRESQL_PASSWORD)
+_api_client = ApiClient(_api)
+rate_limiter = RateLimiter(API_RATE)
 
-api = Request(getenv("YANDEX_TOKEN"))
-artist_api_client = ArtistApiClient(api)
-crawler = Crawler.from_list([160970], artist_api_client)
 
+crawler = Crawler.from_list([160970], _api_client, repository, rate_limiter)
 
 for artist in crawler:
-    sleep(1)
     print(artist)
