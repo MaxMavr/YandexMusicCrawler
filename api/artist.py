@@ -1,4 +1,3 @@
-from datetime import date
 from api.models import ArtistGetResult
 from api.request import Request
 from db.models import ArtistRecord
@@ -15,13 +14,13 @@ def _parse(artist_data: dict) -> ArtistGetResult:
     available = _artist.get('available')
     name = _artist.get('name')
 
-    genres = _artist.get('genres')
-    countries = _artist.get('countries')
+    genres = _artist.get('genres', [])
+    countries = _artist.get('countries', [])
 
     _counts = _artist.get('counts')
-    tracks_count = _counts.get('tracks')
+    tracks_count = _counts.get('tracks', 0)
 
-    likes_count = _artist.get('likesCount')
+    likes_count = _artist.get('likesCount', 0)
 
     _ratings = _artist.get('ratings', {'day': 0, 'month': 0, 'week': 0})
     ratings_day = _ratings.get('day', 0)
@@ -32,7 +31,7 @@ def _parse(artist_data: dict) -> ArtistGetResult:
     last_month_listeners = _stats.get('lastMonthListeners', 0)
     last_month_listeners_delta = _stats.get('lastMonthListenersDelta', 0)
 
-    _similar_artists = result.get('similarArtists')
+    _similar_artists = result.get('similarArtists', [])
     similar_artist_ids = []
 
     for similar_artist in _similar_artists:
@@ -58,7 +57,7 @@ def _parse(artist_data: dict) -> ArtistGetResult:
     )
 
 
-class ArtistApiClient:
+class ApiClient:
     def __init__(self, api: Request):
         self.api = api
 
