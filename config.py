@@ -7,11 +7,7 @@ QUEUE_FILE = TEMP_PATH / "queue.json"
 
 API_RATE = 3  # 3 запроса/сек
 REFRESH_INTERVAL = 30 * 24 * 60 * 60  # 30 дней
-
-
 RANGE_ARTIST_ID = (1, 20_000_000)
-
-
 
 load_dotenv(find_dotenv())
 YANDEX_TOKEN = getenv("YANDEX_TOKEN")

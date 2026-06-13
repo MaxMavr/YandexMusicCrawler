@@ -54,26 +54,23 @@ class Crawler:
         else:
             self.repository.add(result.artist)
 
-    def _get_artist(self, artist_id: int) -> ArtistGetResult:
+    def _get_artist(self, artist_id: int) -> list:
         if self._is_actual(artist_id):
-            return ArtistGetResult(
-                artist=self.repository.get(artist_id),
-                similar_artist_ids=[]
-            )
+            return []
 
         self.rate_limiter.wait()
         result = self.api_client.get(artist_id)
         self._save(result)
 
-        return result
+        return result.similar_artist_ids
 
-    def _process_artist(self, artist_id: int) -> ArtistRecord:
-        result = self._get_artist(artist_id)
+    def _process_artist(self, artist_id: int):
+        similar_artist_ids = self._get_artist(artist_id)
 
-        self.queue.extend(result.similar_artist_ids)
+        self.queue.extend(similar_artist_ids)
 
-        return result.artist
+    def __next__(self) -> (int, int):
+        current_id = self._next_artist_id()
+        self._process_artist(current_id)
 
-    def __next__(self) -> ArtistRecord:
-        artist_id = self._next_artist_id()
-        return self._process_artist(artist_id)
+        return current_id, len(self.queue)

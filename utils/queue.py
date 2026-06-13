@@ -20,6 +20,9 @@ class Queue:
         with open(QUEUE_FILE, "r", encoding="utf-8") as f:
             self.queue.extend(json.load(f))
 
+    def __len__(self):
+        return len(self.queue)
+
     def _check_save(self):
         self.steps_since_last_save += 1
         if self.steps_since_last_save >= self.save_frequency:

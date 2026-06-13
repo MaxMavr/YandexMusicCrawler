@@ -12,8 +12,7 @@ repository = Repository(database="music", password=POSTGRESQL_PASSWORD)
 _api_client = ApiClient(_api)
 rate_limiter = RateLimiter(API_RATE)
 
-
 crawler = Crawler.from_list([160970], _api_client, repository, rate_limiter)
 
-for artist in crawler:
-    print(artist)
+for (current_id, len_queue) in crawler:
+    print(f"{current_id = }, {len_queue = }")
