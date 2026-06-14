@@ -19,3 +19,5 @@ class ArtistRecord:
     ratings_day: int
     ratings_month: int
     ratings_week: int
+
+    is_listened: bool = False

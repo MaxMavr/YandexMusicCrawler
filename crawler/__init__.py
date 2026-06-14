@@ -50,7 +50,7 @@ class Crawler:
 
     def _save(self, result: ArtistGetResult):
         if self.repository.exists(result.artist.id):
-            self.repository.upd(result.artist)
+            self.repository.update(result.artist)
         else:
             self.repository.add(result.artist)
 

@@ -2,17 +2,47 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import psycopg
+from psycopg import Cursor
 from psycopg.rows import dict_row
 
 from db.models import ArtistRecord
+
+
+def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], countries: list[str]) -> None:
+    unique_genres = list(set(genres)) if genres else []
+    unique_countries = list(set(countries)) if countries else []
+
+    if unique_genres:
+        cur.executemany(
+            "INSERT INTO genres (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
+            [(g,) for g in unique_genres]
+        )
+
+        cur.execute("""
+            INSERT INTO artist_genres (artist_id, genre_id)
+            SELECT %s, id FROM genres WHERE name = ANY(%s)
+            ON CONFLICT DO NOTHING
+        """, (artist_id, unique_genres))
+
+    if unique_countries:
+        cur.executemany(
+            "INSERT INTO countries (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
+            [(c,) for c in unique_countries]
+        )
+
+        cur.execute("""
+            INSERT INTO artist_countries (artist_id, country_id)
+            SELECT %s, id FROM countries WHERE name = ANY(%s)
+            ON CONFLICT DO NOTHING
+        """, (artist_id, unique_countries))
 
 
 class Repository:
     def __init__(
             self,
             database: str,
+            password: str,
             user: str = "postgres",
-            password: str = None,
             host: str = "localhost",
             port: int = 5432,
     ):
@@ -81,8 +111,8 @@ class Repository:
             conn.commit()
 
     def add(
-        self,
-        artist: ArtistRecord,
+            self,
+            artist: ArtistRecord,
     ) -> None:
         with self._connect() as conn:
             with conn.cursor() as cur:
@@ -116,45 +146,13 @@ class Repository:
                     False,
                 ))
 
-                for genre in artist.genres:
-                    cur.execute("""
-                        INSERT INTO genres (name)
-                        VALUES (%s)
-                        ON CONFLICT (name) DO NOTHING
-                    """, (genre,))
+                _update_artist_relations(cur, artist.id, artist.genres, artist.countries)
 
-                    cur.execute("""
-                        INSERT INTO artist_genres (
-                            artist_id,
-                            genre_id
-                        )
-                        SELECT %s, id
-                        FROM genres
-                        WHERE name = %s
-                        ON CONFLICT DO NOTHING
-                    """, (artist.id, genre))
+                conn.commit()
 
-                for country in artist.countries:
-                    cur.execute("""
-                        INSERT INTO countries (name)
-                        VALUES (%s)
-                        ON CONFLICT (name) DO NOTHING
-                    """, (country,))
-
-                    cur.execute("""
-                        INSERT INTO artist_countries (
-                            artist_id,
-                            country_id
-                        )
-                        SELECT %s, id
-                        FROM countries
-                        WHERE name = %s
-                        ON CONFLICT DO NOTHING
-                    """, (artist.id, country))
-
-    def upd(
-        self,
-        artist: ArtistRecord,
+    def update(
+            self,
+            artist: ArtistRecord,
     ) -> None:
         with self._connect() as conn:
             with conn.cursor() as cur:
@@ -193,45 +191,13 @@ class Repository:
                     WHERE artist_id = %s
                 """, (artist.id,))
 
-                for genre in artist.genres:
-                    cur.execute("""
-                        INSERT INTO genres (name)
-                        VALUES (%s)
-                        ON CONFLICT (name) DO NOTHING
-                    """, (genre,))
+                _update_artist_relations(cur, artist.id, artist.genres, artist.countries)
 
-                    cur.execute("""
-                        INSERT INTO artist_genres (
-                            artist_id,
-                            genre_id
-                        )
-                        SELECT %s, id
-                        FROM genres
-                        WHERE name = %s
-                        ON CONFLICT DO NOTHING
-                    """, (artist.id, genre))
-
-                for country in artist.countries:
-                    cur.execute("""
-                        INSERT INTO countries (name)
-                        VALUES (%s)
-                        ON CONFLICT (name) DO NOTHING
-                    """, (country,))
-
-                    cur.execute("""
-                        INSERT INTO artist_countries (
-                            artist_id,
-                            country_id
-                        )
-                        SELECT %s, id
-                        FROM countries
-                        WHERE name = %s
-                        ON CONFLICT DO NOTHING
-                    """, (artist.id, country))
+                conn.commit()
 
     def get(
-        self,
-        artist_id: int,
+            self,
+            artist_id: int,
     ) -> Optional[ArtistRecord]:
         with self._connect() as conn:
             with conn.cursor() as cur:
@@ -242,7 +208,7 @@ class Repository:
                         ON ag.genre_id = g.id
                     WHERE ag.artist_id = %s
                 """, (artist_id,)
-                )
+                            )
                 genres = [row["name"] for row in cur.fetchall()]
 
                 cur.execute("""
@@ -252,7 +218,7 @@ class Repository:
                         ON ac.country_id = c.id
                     WHERE ac.artist_id = %s 
                 """, (artist_id,)
-                )
+                            )
                 countries = [row["name"] for row in cur.fetchall()]
 
                 cur.execute(
@@ -282,6 +248,8 @@ class Repository:
                     ratings_day=row["ratings_day"],
                     ratings_month=row["ratings_month"],
                     ratings_week=row["ratings_week"],
+
+                    is_listened=row["is_listened"],
                 )
 
                 return artist
@@ -306,6 +274,6 @@ class Repository:
                 row = cur.fetchone()
 
                 if row is None:
-                    return timedelta(days=365 * 5_000_000_000)
+                    return timedelta.max
 
                 return datetime.now() - row["date_recording"]
