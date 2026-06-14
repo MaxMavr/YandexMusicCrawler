@@ -1,11 +1,36 @@
+import requests
 from api.models import ArtistGetResult
-from api.request import Request
 from db.models import ArtistRecord
+
+HEADERS = {
+    'X-Yandex-Music-Client': 'YandexMusicAndroid/24023621',
+}
+DEFAULT_TIMEOUT = 5
+
+
+class _RequestsWrapper:
+    def __init__(self, token: str, language: str = 'ru'):
+        self.headers = {
+            **HEADERS,
+            'Authorization': f'OAuth {token}',
+            'Accept-Language': language,
+        }
+
+    def get(self, url: str) -> dict:
+        response = requests.get(
+            url,
+            headers=self.headers,
+            timeout=DEFAULT_TIMEOUT,
+        )
+
+        response.raise_for_status()
+        return response.json()
+
 
 BASE_URL = 'https://api.music.yandex.net'
 
 
-def _parse(artist_data: dict) -> ArtistGetResult:
+def _parse_artist(artist_data: dict) -> ArtistGetResult:
     result = artist_data.get('result')
 
     _artist = result.get('artist')
@@ -58,10 +83,10 @@ def _parse(artist_data: dict) -> ArtistGetResult:
 
 
 class ApiClient:
-    def __init__(self, api: Request):
-        self.api = api
+    def __init__(self, token: str, language: str = 'ru'):
+        self.requests = _RequestsWrapper(token, language)
 
     def get(self, artist_id: int) -> ArtistGetResult:
         url = f"{BASE_URL}/artists/{artist_id}/brief-info"
-        data = self.api.get(url)
-        return _parse(data)
+        data = self.requests.get(url)
+        return _parse_artist(data)
