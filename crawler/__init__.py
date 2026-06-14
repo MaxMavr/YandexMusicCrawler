@@ -41,7 +41,7 @@ class Crawler:
         return _get_random_artist_id()
 
     def _is_actual(self, artist_id: int) -> bool:
-        if not self.repository.exists(artist_id):
+        if not self.repository.artist_exists(artist_id):
             return False
 
         age = self.repository.get_record_age(artist_id)
@@ -49,10 +49,10 @@ class Crawler:
         return age < timedelta(seconds=REFRESH_INTERVAL)
 
     def _save(self, result: ArtistGetResult):
-        if self.repository.exists(result.artist.id):
-            self.repository.update(result.artist)
+        if self.repository.artist_exists(result.artist.id):
+            self.repository.update_artist(result.artist)
         else:
-            self.repository.add(result.artist)
+            self.repository.add_artist(result.artist)
 
     def _get_artist(self, artist_id: int) -> list:
         if self._is_actual(artist_id):

@@ -21,3 +21,15 @@ class ArtistRecord:
     ratings_week: int
 
     is_listened: bool = False
+
+
+@dataclass
+class PaginationResult:
+    """Результат пагинации"""
+    items: list[ArtistRecord]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+    has_next: bool
+    has_prev: bool
