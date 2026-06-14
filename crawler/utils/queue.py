@@ -1,23 +1,25 @@
-from config import QUEUE_FILE, TEMP_PATH
 import json
 from collections import deque
+
+from config import QueueConfig
 
 
 class Queue:
     def save(self):
-        with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+        with open(self.queue_file, "w", encoding="utf-8") as f:
             json.dump(list(self.queue), f, ensure_ascii=False, indent=4)
 
-    def __init__(self, initial_queue: list[int], save_frequency: int = 100):
-        self.queue = deque(initial_queue)
-        self.save_frequency = save_frequency
+    def __init__(self, config: QueueConfig):
+        self.queue = deque()
+        self.save_frequency = config.save_frequency
         self.steps_since_last_save = 0
+        self.queue_file = config.queue_file
 
-        if not QUEUE_FILE.exists():
+        if not self.queue_file.exists():
             self.save()
             return
 
-        with open(QUEUE_FILE, "r", encoding="utf-8") as f:
+        with open(self.queue_file, "r", encoding="utf-8") as f:
             self.queue.extend(json.load(f))
 
     def __len__(self):

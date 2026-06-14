@@ -1,35 +1,27 @@
 import random
 from datetime import timedelta
-from api.artist import ApiClient
-from api.models import ArtistGetResult
-from config import RANGE_ARTIST_ID, REFRESH_INTERVAL
-from db import Repository, ArtistRecord
-from utils.queue import Queue
-from utils.rate_limiter import RateLimiter
 
-
-def _get_random_artist_id() -> int:
-    return random.randint(*RANGE_ARTIST_ID)
+from config import CrawlerConfig
+from crawler.api import ApiClient
+from crawler.api import ArtistGetResult
+from db import Repository
+from crawler.utils.queue import Queue
+from crawler.utils.rate_limiter import RateLimiter
 
 
 class Crawler:
-    def __init__(self, api_client: ApiClient, repository: Repository, seed_ids: list[int], rate_limiter: RateLimiter):
-        self.api_client = api_client
+    def __init__(self, repository: Repository, config: CrawlerConfig):
         self.repository = repository
-        self.queue = Queue(seed_ids)
-        self.rate_limiter = rate_limiter
+        self.refresh_interval = config.refresh_interval
 
-    @classmethod
-    def from_random(cls, count: int, api_client: ApiClient, repository: Repository, rate_limiter: RateLimiter):
-        seed_ids = [
-            _get_random_artist_id()
-            for _ in range(count)
-        ]
-        return cls(api_client, repository, seed_ids, rate_limiter)
+        self.range_artist_id = config.range_artist_id
 
-    @classmethod
-    def from_list(cls, artist_ids: list[int], api_client: ApiClient, repository: Repository, rate_limiter: RateLimiter):
-        return cls(api_client, repository, artist_ids, rate_limiter)
+        self.queue = Queue(config.queue_config)
+        self.api_client = ApiClient(config.api_client_config)
+        self.rate_limiter = RateLimiter(config.rate_limiter)
+
+    def _get_random_artist_id(self) -> int:
+        return random.randint(self.range_artist_id.min, self.range_artist_id.max)
 
     def __iter__(self):
         return self
@@ -46,7 +38,7 @@ class Crawler:
 
         age = self.repository.get_record_age(artist_id)
 
-        return age < timedelta(seconds=REFRESH_INTERVAL)
+        return age < timedelta(seconds=self.refresh_interval)
 
     def _save(self, result: ArtistGetResult):
         if self.repository.artist_exists(result.artist.id):

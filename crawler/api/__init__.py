@@ -1,26 +1,29 @@
 import requests
-from api.models import ArtistGetResult
+
+from config import ApiClientConfig
+from crawler.api.models import ArtistGetResult
 from db.models import ArtistRecord
 
 HEADERS = {
-    'X-Yandex-Music-Client': 'YandexMusicAndroid/24023621',
+    'X-Yandex-Music-Client': 'YandexMusicAndroid/24023621'
 }
-DEFAULT_TIMEOUT = 5
 
 
 class _RequestsWrapper:
-    def __init__(self, token: str, language: str = 'ru'):
+    def __init__(self, config: ApiClientConfig):
         self.headers = {
             **HEADERS,
-            'Authorization': f'OAuth {token}',
-            'Accept-Language': language,
+            'Authorization': f'OAuth {config.token}',
+            'Accept-Language': config.language,
         }
+
+        self.timeout = config.timeout
 
     def get(self, url: str) -> dict:
         response = requests.get(
             url,
             headers=self.headers,
-            timeout=DEFAULT_TIMEOUT,
+            timeout=self.timeout,
         )
 
         response.raise_for_status()
@@ -83,8 +86,8 @@ def _parse_artist(artist_data: dict) -> ArtistGetResult:
 
 
 class ApiClient:
-    def __init__(self, token: str, language: str = 'ru'):
-        self.requests = _RequestsWrapper(token, language)
+    def __init__(self, config: ApiClientConfig):
+        self.requests = _RequestsWrapper(config)
 
     def get(self, artist_id: int) -> ArtistGetResult:
         url = f"{BASE_URL}/artists/{artist_id}/brief-info"

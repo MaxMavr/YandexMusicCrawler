@@ -5,6 +5,7 @@ import psycopg
 from psycopg import Cursor
 from psycopg.rows import dict_row
 
+from config import RepositoryConfig
 from db.models import ArtistRecord, PaginationResult
 
 VALID_SORT_FIELDS = [
@@ -44,15 +45,9 @@ def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], cou
 
 
 class Repository:
-    def __init__(
-            self,
-            database: str,
-            password: str,
-            user: str = "postgres",
-            host: str = "localhost",
-            port: int = 5432,
-    ):
-        self._dsn = f"postgresql://{user}:{password}@{host}:{port}/{database}"
+    def __init__(self,
+                 config: RepositoryConfig):
+        self._dsn = f"postgresql://{config.user}:{config.password}@{config.host}:{config.port}/{config.database}"
         self._create_tables()
 
     def _connect(self):

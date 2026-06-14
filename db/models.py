@@ -25,7 +25,6 @@ class ArtistRecord:
 
 @dataclass
 class PaginationResult:
-    """Результат пагинации"""
     items: list[ArtistRecord]
     total: int
     page: int
