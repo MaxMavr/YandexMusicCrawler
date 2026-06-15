@@ -1,0 +1,84 @@
+* {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    table {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    th,
+    td {
+        border: 1px solid #e5e5e5;
+        padding: 12px;
+        text-align: left;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    th {
+        background: #f7f7f7;
+        position: relative;
+        user-select: none;
+    }
+
+    tr:nth-child(even) {
+        background: #fafafa;
+    }
+
+    /* Ручка изменения размера */
+    .resize-handle {
+        position: absolute;
+        top: 0;
+        right: -3px;
+        width: 6px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 10;
+    }
+
+    .resize-handle:hover {
+        background: rgba(0, 123, 255, 0.2);
+    }
+
+    /* Пагинация */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .pagination button {
+        border: 1px solid #ccc;
+        background: white;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+
+    .pagination button:hover {
+        background: #f0f0f0;
+    }
+
+    .pagination button.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+    }

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Артисты</title>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/reset.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/table.css') }}" />
+</head>
+<body>
+    <table id="artist-table">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Название</th>
+                  <th>Статус</th>
+                  <th>Дата создания</th>
+              </tr>
+          </thead>
+          <tbody id="artist-table-body">
+              <!-- Данные будут загружаться сюда -->
+          </tbody>
+      </table>
+
+    <div id="loading-message" class="message" style="display: none;">Загрузка...</div>
+    <div id="empty-message" class="message" style="display: none;">Пусто</div>
+
+    <script type="module"
+        src="{{ url_for('static', filename='scripts/loading.js') }}">
+    </script>
+</body>
+</html>
