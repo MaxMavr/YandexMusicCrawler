@@ -22,9 +22,26 @@ class ArtistRecord:
 
     is_listened: bool = False
 
+    def __dict__(self):
+        return {
+            'last_month_listeners': self.last_month_listeners,
+            'last_month_listeners_delta': self.last_month_listeners_delta,
+            'id': self.id,
+            'is_available': self.is_available,
+            'name': self.name,
+            'genres': self.genres,
+            'countries': self.countries,
+            'tracks_count': self.tracks_count,
+            'likes_count': self.likes_count,
+            'ratings_day': self.ratings_day,
+            'ratings_month': self.ratings_month,
+            'ratings_week': self.ratings_week,
+            'is_listened': self.is_listened
+        }
+
 
 @dataclass
-class PaginationResult:
+class ArtistsPage:
     items: list[ArtistRecord]
     total: int
     page: int
@@ -32,3 +49,14 @@ class PaginationResult:
     total_pages: int
     has_next: bool
     has_prev: bool
+
+    def __dict__(self):
+        return {
+            'items': [item.__dict__ for item in self.items],
+            'total': self.total,
+            'page': self.page,
+            'page_size': self.page_size,
+            'total_pages': self.total_pages,
+            'has_next': self.has_next,
+            'has_prev': self.has_prev
+        }

@@ -6,7 +6,7 @@ from psycopg import Cursor
 from psycopg.rows import dict_row
 
 from config import RepositoryConfig
-from db.models import ArtistRecord, PaginationResult
+from db.models import ArtistRecord, ArtistsPage
 
 VALID_SORT_FIELDS = [
     "id", "name", "last_month_listeners", "last_month_listeners_delta",
@@ -346,7 +346,7 @@ class Repository:
             sort_by: str = "name",
             sort_order: str = "ASC",
             filters: Optional[dict] = None
-    ) -> PaginationResult:
+    ) -> ArtistsPage:
 
         page = max(1, page)
         page_size = max(1, page_size)
@@ -507,7 +507,7 @@ class Repository:
                 cur.execute(paginated_query, pagination_params)
                 rows = cur.fetchall()
 
-                return PaginationResult(
+                return ArtistsPage(
                     items=[
                         ArtistRecord(
                             id=row["id"],
