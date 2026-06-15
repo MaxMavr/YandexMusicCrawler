@@ -22,7 +22,7 @@ class ArtistRecord:
 
     is_listened: bool = False
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             'last_month_listeners': self.last_month_listeners,
             'last_month_listeners_delta': self.last_month_listeners_delta,
@@ -42,7 +42,7 @@ class ArtistRecord:
 
 @dataclass
 class ArtistsPage:
-    items: list[ArtistRecord]
+    artist_records: list[ArtistRecord]
     total: int
     page: int
     page_size: int
@@ -50,9 +50,9 @@ class ArtistsPage:
     has_next: bool
     has_prev: bool
 
-    def __dict__(self):
+    def to_dict(self):
         return {
-            'items': [item.__dict__ for item in self.items],
+            'artists': [ar.to_dict() for ar in self.artist_records],
             'total': self.total,
             'page': self.page,
             'page_size': self.page_size,

@@ -508,7 +508,7 @@ class Repository:
                 rows = cur.fetchall()
 
                 return ArtistsPage(
-                    items=[
+                    artist_records=[
                         ArtistRecord(
                             id=row["id"],
                             name=row["name"],
