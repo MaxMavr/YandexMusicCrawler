@@ -2,13 +2,61 @@ const SCROLL_THRESHOLD = 200;
 const ARTIST_TBODY = document.getElementById('artist-table-body');
 
 
-let LOADING_MESSAGE = document.getElementById('loading-message');
-let EMPTY_MESSAGE = document.getElementById('empty-message');
+const LOADING_MESSAGE = document.getElementById('loading-message');
+const EMPTY_MESSAGE = document.getElementById('empty-message');
+const ARTIST_ROW_TEMPLATE = document.getElementById('artist-row-template');
 
 import { queryParams } from './state.js';
 
 let isLoading = false;
 let hasMore = true;
+
+
+function make_artist_row(artist) {
+    const row = ARTIST_ROW_TEMPLATE.content.cloneNode(true);
+
+    const artistCell = row.querySelector('.artist');
+    const link = document.createElement('a');
+    link.href = `https://music.yandex.ru/artist/${artist.id}`;
+    link.target = '_blank';
+    link.textContent = artist.name;
+    artistCell.appendChild(link);
+
+    row.querySelector('.tracks').textContent =
+        artist.tracks_count.toLocaleString('ru-RU');
+
+    row.querySelector('.likes').textContent =
+        artist.likes_count.toLocaleString('ru-RU');
+
+    row.querySelector('.listeners').textContent =
+        artist.last_month_listeners.toLocaleString('ru-RU');
+
+    let deltaCell = row.querySelector('.listeners-delta');
+    const deltaValue = artist.last_month_listeners_delta;
+    const isPositive = deltaValue > 0;
+    const absValue = Math.abs(deltaValue);
+    deltaCell.classList.add(isPositive ? 'rise' : 'fall');
+    deltaCell.textContent = `${isPositive ? '+' : '−'}${absValue.toLocaleString('ru-RU')}`;
+
+
+
+    row.querySelector('.rating-day').textContent =
+        artist.ratings_day;
+
+    row.querySelector('.rating-month').textContent =
+        artist.ratings_month;
+
+    row.querySelector('.rating-week').textContent =
+        artist.ratings_week;
+
+    row.querySelector('.genres').textContent =
+        artist.genres.join(', ');
+
+    row.querySelector('.countries').textContent =
+        artist.countries.join(', ');
+
+    return row;
+}
 
 async function loadMore() {
     if (isLoading || !hasMore) return;
@@ -33,16 +81,11 @@ async function loadMore() {
         }
 
         data.artists.forEach(artist => {
-            const row = document.createElement('tr');
+            let artist_row = make_artist_row(artist);
 
-            row.innerHTML = `
-                <td>${artist.id}</td>
-                <td>${artist.name}</td>
-                <td>${artist.is_available ? 'Доступен' : 'Недоступен'}</td>
-                <td>${artist.likes_count.toLocaleString('ru-RU')}</td>
-            `;
+            console.log(artist_row);
 
-            ARTIST_TBODY.appendChild(row);
+            ARTIST_TBODY.appendChild(artist_row);
         });
 
         if (data.total === 0) {

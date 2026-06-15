@@ -41,6 +41,23 @@
         background: #fafafa;
     }
 
+    #artist-table {
+    width: 100%;
+    border-collapse: collapse;
+    }
+
+    #artist-table thead {
+        position: sticky;
+        top: 60px; /* высота header */
+        z-index: 999;
+    }
+
+    #artist-table thead td,
+    #artist-table thead th {
+        background: white;
+        border-bottom: 1px solid #ddd;
+    }
+
     /* Ручка изменения размера */
     .resize-handle {
         position: absolute;
@@ -81,4 +98,12 @@
         background: #007bff;
         color: white;
         border-color: #007bff;
+    }
+
+    .listeners-delta.rise {
+        color: #44944A;
+    }
+
+    .listeners-delta.fall {
+        color: #C51D34;
     }

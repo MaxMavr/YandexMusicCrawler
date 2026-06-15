@@ -8,21 +8,59 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/reset.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/table.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/header.css') }}" />
 </head>
 <body>
+    <header>
+      <h1>
+        Артисты
+      </h1>
+    </header>
+
     <table id="artist-table">
-          <thead>
+          <thead id="artist-table-head">
               <tr>
-                  <th>ID</th>
-                  <th>Название</th>
-                  <th>Статус</th>
-                  <th>Дата создания</th>
+                <td>Название</td>
+
+                <td>Треки</td>
+                <td>Лайки</td>
+                <td>Слушатели</td>
+
+                <td>Рейтинг день</td>
+                <td>Рейтинг месяц</td>
+                <td>Рейтинг неделя</td>
+
+                <td>Жанры</td>
+                <td>Страны</td>
               </tr>
           </thead>
           <tbody id="artist-table-body">
               <!-- Данные будут загружаться сюда -->
           </tbody>
       </table>
+
+
+    <template id="artist-row-template">
+      <tr>
+        <td class="artist"></td>  <!-- name --> <!-- id -->
+
+        <td class="tracks"></td>  <!-- tracks_count -->
+        <td class="likes"></td>  <!-- likes_count -->
+        <td>
+          <span class="listeners"></span>
+          <span class="listeners-delta"></span>
+        </td>  <!-- last_month_listeners -->  <!-- last_month_listeners_delta -->
+
+        <td class="rating-day"></td>  <!-- ratings_day -->
+        <td class="rating-month"></td>  <!-- ratings_month -->
+        <td class="rating-week"></td>  <!-- ratings_week -->
+
+        <td class="genres"></td>  <!-- genres -->
+        <td class="countries"></td>  <!-- countries -->
+      </tr>
+
+      <!-- is_listened -->
+  </template>
 
     <div id="loading-message" class="message" style="display: none;">Загрузка...</div>
     <div id="empty-message" class="message" style="display: none;">Пусто</div>
