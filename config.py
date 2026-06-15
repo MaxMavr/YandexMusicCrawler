@@ -32,6 +32,7 @@ class CrawlerConfig:
     rate_limiter: float = 3  # 3 запроса/сек
     refresh_interval = 30 * 24 * 60 * 60  # 30 дней
     range_artist_id = Range(min=1, max=20_000_000)
+    status_check_timeout = 5  # 5 сек
 
 
 @dataclass

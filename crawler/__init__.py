@@ -1,4 +1,5 @@
 import random
+import threading
 from datetime import timedelta
 
 from config import CrawlerConfig
@@ -19,18 +20,36 @@ class Crawler:
         self.queue = Queue(config.queue_config)
         self.api_client = ApiClient(config.api_client_config)
         self.rate_limiter = RateLimiter(config.rate_limiter)
+        self.status_check_timeout = config.status_check_timeout
+
+        self.stop_event = threading.Event()
+
+    def run(self):
+        while not self.stop_event.is_set():
+            if not self.repository.is_crawler_running():
+                self.stop_event.wait(self.status_check_timeout)
+                continue
+
+            current_id = self._next_artist_id()
+
+            self._process_artist(current_id)
+
+            # print(current_id, len(self.queue))
+
+            if self.stop_event.is_set():
+                break
+
+    def stop(self):
+        self.stop_event.set()
 
     def _get_random_artist_id(self) -> int:
         return random.randint(self.range_artist_id.min, self.range_artist_id.max)
-
-    def __iter__(self):
-        return self
 
     def _next_artist_id(self) -> int:
         if self.queue:
             return self.queue.popleft()
 
-        return _get_random_artist_id()
+        return self._get_random_artist_id()
 
     def _is_actual(self, artist_id: int) -> bool:
         if not self.repository.artist_exists(artist_id):
@@ -60,9 +79,3 @@ class Crawler:
         similar_artist_ids = self._get_artist(artist_id)
 
         self.queue.extend(similar_artist_ids)
-
-    def __next__(self) -> (int, int):
-        current_id = self._next_artist_id()
-        self._process_artist(current_id)
-
-        return current_id, len(self.queue)
