@@ -6,7 +6,7 @@ from config import CrawlerConfig
 from crawler.api import ApiClient
 from crawler.api import ArtistGetResult
 from db import Repository
-from crawler.utils.queue import Queue
+from crawler.utils.pool import Pool
 from crawler.utils.rate_limiter import RateLimiter
 
 
@@ -17,7 +17,7 @@ class Crawler:
 
         self.range_artist_id = config.range_artist_id
 
-        self.queue = Queue(config.queue_config)
+        self.ids_pool = Pool(config.pool_config)
         self.api_client = ApiClient(config.api_client_config)
         self.rate_limiter = RateLimiter(config.rate_limiter)
         self.status_check_timeout = config.status_check_timeout
@@ -30,26 +30,28 @@ class Crawler:
                 self.stop_event.wait(self.status_check_timeout)
                 continue
 
-            current_id = self._next_artist_id()
+            current_id = self._next_id()
 
             self._process_artist(current_id)
 
-            # print(current_id, len(self.queue))
+            print('id', current_id, 'len', len(self.ids_pool))
 
             if self.stop_event.is_set():
                 break
 
+        self.ids_pool.save()
+
     def stop(self):
         self.stop_event.set()
 
-    def _get_random_artist_id(self) -> int:
+    def _get_random_id(self) -> int:
         return random.randint(self.range_artist_id.min, self.range_artist_id.max)
 
-    def _next_artist_id(self) -> int:
-        if self.queue:
-            return self.queue.popleft()
+    def _next_id(self) -> int:
+        if self.ids_pool:
+            return self.ids_pool.next()
 
-        return self._get_random_artist_id()
+        return self._get_random_id()
 
     def _is_actual(self, artist_id: int) -> bool:
         if not self.repository.artist_exists(artist_id):
@@ -78,4 +80,4 @@ class Crawler:
     def _process_artist(self, artist_id: int):
         similar_artist_ids = self._get_artist(artist_id)
 
-        self.queue.extend(similar_artist_ids)
+        self.ids_pool.update(similar_artist_ids)

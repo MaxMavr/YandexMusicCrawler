@@ -17,9 +17,9 @@ class ApiClientConfig:
 
 
 @dataclass
-class QueueConfig:
-    queue_file: Path
-    save_frequency: int = 100  # сохраняем каждый 100 шагов
+class PoolConfig:
+    file: Path
+    save_frequency: int = 10_000  # сохраняем каждый 10 000 шагов
 
 
 Range = namedtuple('Range', ['min', 'max'])
@@ -28,7 +28,7 @@ Range = namedtuple('Range', ['min', 'max'])
 @dataclass
 class CrawlerConfig:
     api_client_config: ApiClientConfig
-    queue_config: QueueConfig
+    pool_config: PoolConfig
     rate_limiter: float = 3  # 3 запроса/сек
     refresh_interval = 30 * 24 * 60 * 60  # 30 дней
     range_artist_id = Range(min=1, max=20_000_000)
@@ -48,13 +48,13 @@ API_CLIENT_CONFIG = ApiClientConfig(
     token=getenv("YANDEX_TOKEN"),
 )
 
-QUEUE_CONFIG = QueueConfig(
-    queue_file=TEMP_PATH / "queue.json",
+POOL_CONFIG = PoolConfig(
+    file=TEMP_PATH / "queue.json",
 )
 
 CRAWLER_CONFIG = CrawlerConfig(
     api_client_config=API_CLIENT_CONFIG,
-    queue_config=QUEUE_CONFIG,
+    pool_config=POOL_CONFIG,
 )
 
 REPOSITORY_CONFIG = RepositoryConfig(
