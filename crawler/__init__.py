@@ -26,10 +26,6 @@ class Crawler:
 
     def run(self):
         while not self.stop_event.is_set():
-            if not self.repository.is_crawler_running():
-                self.stop_event.wait(self.status_check_timeout)
-                continue
-
             current_id = self._next_id()
 
             self._process_artist(current_id)

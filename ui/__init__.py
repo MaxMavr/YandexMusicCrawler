@@ -10,16 +10,16 @@ def create_app(repository: Repository) -> Flask:
     def index():
         return render_template('index.html')
 
-    @app.route('/crawler/start', methods=['POST'])
-    def start_crawler():
-        if not repository.try_start_crawler():
-            return jsonify({"status": "already_running"}), 409
-        return jsonify({"status": "started"})
-
-    @app.route('/crawler/stop', methods=['POST'])
-    def stop_crawler():
-        repository.stop_crawler()
-        return jsonify({"status": "stopping"})
+    # @app.route('/crawler/start', methods=['POST'])
+    # def start_crawler():
+    #     if not repository.try_start_crawler():
+    #         return jsonify({"status": "already_running"}), 409
+    #     return jsonify({"status": "started"})
+    #
+    # @app.route('/crawler/stop', methods=['POST'])
+    # def stop_crawler():
+    #     repository.stop_crawler()
+    #     return jsonify({"status": "stopping"})
 
     @app.route('/crawler/status', methods=['GET'])
     def status_crawler():

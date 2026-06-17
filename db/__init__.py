@@ -110,44 +110,44 @@ class Repository:
                     );
                 """)
 
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS crawler_lock (
-                        id BOOLEAN PRIMARY KEY DEFAULT TRUE,
-                        running BOOLEAN NOT NULL DEFAULT FALSE
-                    );
-                    INSERT INTO crawler_lock (id, running)
-                    VALUES (TRUE, FALSE)
-                    ON CONFLICT (id) DO NOTHING;
-                """)
+                # cur.execute("""
+                #     CREATE TABLE IF NOT EXISTS crawler_lock (
+                #         id BOOLEAN PRIMARY KEY DEFAULT TRUE,
+                #         running BOOLEAN NOT NULL DEFAULT FALSE
+                #     );
+                #     INSERT INTO crawler_lock (id, running)
+                #     VALUES (TRUE, FALSE)
+                #     ON CONFLICT (id) DO NOTHING;
+                # """)
             conn.commit()
 
-    def is_crawler_running(self) -> bool:
-        with self._connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT running FROM crawler_lock WHERE id = TRUE")
-                result = cur.fetchone()
-                return result["running"] if result else False
-
-    def try_start_crawler(self) -> bool:
-        with self._connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE crawler_lock
-                    SET running = TRUE
-                    WHERE id = TRUE AND running = FALSE
-                    RETURNING running;
-                """)
-                result = cur.fetchone()
-                return result is not None
-
-    def stop_crawler(self) -> None:
-        with self._connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE crawler_lock
-                    SET running = FALSE
-                    WHERE id = TRUE;
-                """)
+    # def is_crawler_running(self) -> bool:
+    #     with self._connect() as conn:
+    #         with conn.cursor() as cur:
+    #             cur.execute("SELECT running FROM crawler_lock WHERE id = TRUE")
+    #             result = cur.fetchone()
+    #             return result["running"] if result else False
+    #
+    # def try_start_crawler(self) -> bool:
+    #     with self._connect() as conn:
+    #         with conn.cursor() as cur:
+    #             cur.execute("""
+    #                 UPDATE crawler_lock
+    #                 SET running = TRUE
+    #                 WHERE id = TRUE AND running = FALSE
+    #                 RETURNING running;
+    #             """)
+    #             result = cur.fetchone()
+    #             return result is not None
+    #
+    # def stop_crawler(self) -> None:
+    #     with self._connect() as conn:
+    #         with conn.cursor() as cur:
+    #             cur.execute("""
+    #                 UPDATE crawler_lock
+    #                 SET running = FALSE
+    #                 WHERE id = TRUE;
+    #             """)
 
     def add_artist(
             self,
