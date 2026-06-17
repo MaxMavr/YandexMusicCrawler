@@ -3,68 +3,49 @@ import requests
 from config import ApiClientConfig
 from crawler.api.models import ArtistGetResult
 from db.models import ArtistRecord
+from typing import Any
 
 HEADERS = {
     'X-Yandex-Music-Client': 'YandexMusicAndroid/24023621'
 }
 
 
-class _RequestsWrapper:
-    def __init__(self, config: ApiClientConfig):
-        self.headers = {
-            **HEADERS,
-            'Authorization': f'OAuth {config.token}',
-            'Accept-Language': config.language,
-        }
-
-        self.timeout = config.timeout
-
-    def get(self, url: str) -> dict:
-        response = requests.get(
-            url,
-            headers=self.headers,
-            timeout=self.timeout,
-        )
-
-        response.raise_for_status()
-        return response.json()
-
-
-BASE_URL = 'https://api.music.yandex.net'
-
-
-def _parse_artist(artist_data: dict) -> ArtistGetResult:
-    result = artist_data.get('result')
+def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
+    result = artist_data.get("result")
+    if not result:
+        raise ValueError("Неверный ответ API: отсутствует результат")
 
     _artist = result.get('artist')
+    if not _artist:
+        raise ValueError("Неверный ответ API: отсутствует artist")
 
     idx = _artist.get('id')
-    is_available = _artist.get('available', False)
     name = _artist.get('name')
+    is_available = _artist.get('available', False)
 
     genres = _artist.get('genres', [])
     countries = _artist.get('countries', [])
 
-    _counts = _artist.get('counts')
+    _counts = _artist.get('counts', {})
     tracks_count = _counts.get('tracks', 0)
 
     likes_count = _artist.get('likesCount', 0)
 
-    _ratings = _artist.get('ratings', {'day': 0, 'month': 0, 'week': 0})
+    _ratings = _artist.get('ratings', {})
     ratings_day = _ratings.get('day', 0)
     ratings_month = _ratings.get('month', 0)
     ratings_week = _ratings.get('week', 0)
 
-    _stats = result.get('stats', {'last_month_listeners': 0, 'last_month_listeners_delta': 0})
+    _stats = result.get('stats', {})
     last_month_listeners = _stats.get('lastMonthListeners', 0)
     last_month_listeners_delta = _stats.get('lastMonthListenersDelta', 0)
 
     _similar_artists = result.get('similarArtists', [])
-    similar_artist_ids = []
-
-    for similar_artist in _similar_artists:
-        similar_artist_idx = similar_artist.get('id')
-        similar_artist_ids.append(similar_artist_idx)
+    similar_artist_ids = [
+        artist.get("id")
+        for artist in _similar_artists
+        if "id" in artist
+    ]
 
     return ArtistGetResult(
         artist=ArtistRecord(
