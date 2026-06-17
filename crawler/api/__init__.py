@@ -1,4 +1,4 @@
-import requests
+import aiohttp
 
 from config import ApiClientConfig
 from crawler.api.models import ArtistGetResult
@@ -68,9 +68,33 @@ def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
 
 class ApiClient:
     def __init__(self, config: ApiClientConfig):
-        self.requests = _RequestsWrapper(config)
+        self.headers = {
+            **HEADERS,
+            'Authorization': f'OAuth {config.token}',
+            'Accept-Language': config.language,
+        }
+        self.timeout = config.timeout
+        self.base_url = config.base_url
+        self._session: aiohttp.ClientSession | None = None
 
-    def get(self, artist_id: int) -> ArtistGetResult:
-        url = f"{BASE_URL}/artists/{artist_id}/brief-info"
-        data = self.requests.get(url)
-        return _parse_artist(data)
+    async def __aenter__(self):
+        self._session = aiohttp.ClientSession(
+            headers=self.headers,
+            timeout=aiohttp.ClientTimeout(total=self.timeout)
+        )
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if self._session:
+            await self._session.close()
+
+    async def get(self, artist_id: int) -> ArtistGetResult:
+        if not self._session:
+            raise RuntimeError("Сессия не инициализирована. Используйте 'async with'")
+
+        url = f"{self.base_url}/artists/{artist_id}/brief-info"
+
+        async with self._session.get(url) as response:
+            response.raise_for_status()
+            data = await response.json()
+            return _parse_artist(data)

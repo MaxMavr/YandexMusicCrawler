@@ -1,3 +1,4 @@
+import asyncio
 import threading
 import signal
 import sys
@@ -14,8 +15,6 @@ if __name__ == "__main__":
     app = create_app(repository)
 
     def shutdown(signum, frame):
-        repository.stop_crawler()
-
         crawler.stop()
         crawler_thread.join(timeout=30)
 
@@ -24,8 +23,15 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, shutdown)
     signal.signal(signal.SIGTERM, shutdown)
 
+
     def run_crawler():
-        crawler.run()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        try:
+            loop.run_until_complete(crawler.run())
+        finally:
+            loop.close()
 
 
     crawler_thread = threading.Thread(target=run_crawler)
