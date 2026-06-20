@@ -36,6 +36,29 @@ def create_app(repository: Repository) -> Flask:
         all_countries = repository.get_all_countries()
         return jsonify(all_countries)
 
+    @app.route('/api/random_artist', methods=['POST'])
+    def get_random_artist():
+        data = request.get_json()
+
+        filters = data.get('filters', {})
+
+        sort_by = data.get('sortBy', 'name')
+        sort_order = data.get('sortOrder', 'asc')
+
+        artists_count = repository.get_artists_count(filters=filters)
+
+        if artists_count == 0:
+            return jsonify({"error": "No artists found"}), 404
+
+        artist = repository.get_artist_at(
+            index=randrange(artists_count),
+            sort_by=sort_by,
+            sort_order=sort_order,
+            filters=filters
+        )
+
+        return jsonify(artist.to_dict())
+
     @app.route('/api/artists', methods=['POST'])
     def get_artists():
         data = request.get_json()

@@ -1,4 +1,4 @@
-import random
+from random import randint
 import threading
 from datetime import timedelta
 
@@ -10,7 +10,7 @@ from crawler.utils.pool import Pool
 from crawler.utils.rate_limiter import RateLimiter
 
 # from typing import Literal
-# Literal['random', 'order asc', 'order desc', 'similar']
+# Literal['random', 'order', 'similar']
 
 
 class Crawler:
@@ -44,7 +44,7 @@ class Crawler:
         self.stop_event.set()
 
     def _get_random_id(self) -> int:
-        return random.randint(self.range_artist_id.min, self.range_artist_id.max)
+        return randint(self.range_artist_id.min, self.range_artist_id.max)
 
     async def _next_id(self) -> int:
         if self.ids_pool:
