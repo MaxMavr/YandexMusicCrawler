@@ -18,6 +18,7 @@ const FILTER_CONFIG = {
 import { queryParams, updateQueryParams } from './state.js';
 import { loadArtistPage } from './loading.js';
 import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
+import { initInfoLabelButtons } from './info.js';
 
 function initTagsButtons() {
     document
@@ -150,14 +151,18 @@ function renderSelectedTags() {
             const tag = config.make(tagCode);
             tag.classList.add('select-tag');
             tag.classList.add('selected');
+            tag.classList.add('info-label-button');
+            tag.dataset.text = 'Убрать';
             tag.classList.remove('tag');
-            
+
             tag.addEventListener('click', (e) => {
                 handleTagClick(e, config.selected)
             });
 
             config.container.append(tag);
         });
+
+        initInfoLabelButtons(config.container);
     });
 }
 
