@@ -44,6 +44,130 @@ def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], cou
         """, (artist_id, unique_countries))
 
 
+def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, list]:
+    base_query = """
+        FROM artists a
+        LEFT JOIN artist_genres ag ON a.id = ag.artist_id
+        LEFT JOIN genres g ON ag.genre_id = g.id
+        LEFT JOIN artist_countries ac ON a.id = ac.artist_id
+        LEFT JOIN countries c ON ac.country_id = c.id
+    """
+
+    where_conditions = []
+    params = []
+
+    if filters:
+        if "is_available" in filters:
+            if isinstance(filters["is_available"], bool):
+                where_conditions.append("a.is_available = %s")
+                params.append(filters["is_available"])
+
+        if "is_listened" in filters:
+            if isinstance(filters["is_listened"], bool):
+                where_conditions.append("a.is_listened = %s")
+                params.append(filters["is_listened"])
+
+        if "name_contains" in filters:
+            if isinstance(filters["name_contains"], str):
+                where_conditions.append("a.name ILIKE %s")
+                params.append(f"%{filters['name_contains']}%")
+
+        if "min_listeners" in filters:
+            if isinstance(filters["min_listeners"], int):
+                where_conditions.append("a.last_month_listeners >= %s")
+                params.append(filters["min_listeners"])
+
+        if "max_listeners" in filters:
+            if isinstance(filters["max_listeners"], int):
+                where_conditions.append("a.last_month_listeners <= %s")
+                params.append(filters["max_listeners"])
+
+        if "min_listeners_delta" in filters:
+            if isinstance(filters["min_listeners_delta"], int):
+                where_conditions.append("a.last_month_listeners_delta >= %s")
+                params.append(filters["min_listeners_delta"])
+
+        if "max_listeners_delta" in filters:
+            if isinstance(filters["max_listeners_delta"], int):
+                where_conditions.append("a.last_month_listeners_delta <= %s")
+                params.append(filters["max_listeners_delta"])
+
+        if "min_likes" in filters:
+            if isinstance(filters["min_likes"], int):
+                where_conditions.append("a.likes_count >= %s")
+                params.append(filters["min_likes"])
+
+        if "max_likes" in filters:
+            if isinstance(filters["max_likes"], int):
+                where_conditions.append("a.likes_count <= %s")
+                params.append(filters["max_likes"])
+
+        if "min_tracks" in filters:
+            if isinstance(filters["min_tracks"], int):
+                where_conditions.append("a.tracks_count >= %s")
+                params.append(filters["min_tracks"])
+
+        if "max_tracks" in filters:
+            if isinstance(filters["max_tracks"], int):
+                where_conditions.append("a.tracks_count <= %s")
+                params.append(filters["max_tracks"])
+
+        if "min_ratings_day" in filters:
+            if isinstance(filters["min_ratings_day"], int):
+                where_conditions.append("a.ratings_day >= %s")
+                params.append(filters["min_ratings_day"])
+
+        if "max_ratings_day" in filters:
+            if isinstance(filters["max_ratings_day"], int):
+                where_conditions.append("a.ratings_day <= %s")
+                params.append(filters["max_ratings_day"])
+
+        if "min_ratings_month" in filters:
+            if isinstance(filters["min_ratings_month"], int):
+                where_conditions.append("a.ratings_month >= %s")
+                params.append(filters["min_ratings_month"])
+
+        if "max_ratings_month" in filters:
+            if isinstance(filters["max_ratings_month"], int):
+                where_conditions.append("a.ratings_month <= %s")
+                params.append(filters["max_ratings_month"])
+
+        if "min_ratings_week" in filters:
+            if isinstance(filters["min_ratings_week"], int):
+                where_conditions.append("a.ratings_week >= %s")
+                params.append(filters["min_ratings_week"])
+
+        if "max_ratings_week" in filters:
+            if isinstance(filters["max_ratings_week"], int):
+                where_conditions.append("a.ratings_week <= %s")
+                params.append(filters["max_ratings_week"])
+
+        if "genres" in filters:
+            genres_list = filters["genres"]
+
+            if (isinstance(genres_list, list)
+                    and genres_list
+                    and all(isinstance(g, str) for g in genres_list)):
+                where_conditions.append("g.name = ANY(%s)")
+                params.append(genres_list)
+
+        if "countries" in filters:
+            countries_list = filters["countries"]
+
+            if (isinstance(countries_list, list)
+                    and countries_list
+                    and all(isinstance(c, str) for c in countries_list)):
+                where_conditions.append("c.name = ANY(%s)")
+                params.append(countries_list)
+
+    where_clause = ""
+
+    if where_conditions:
+        where_clause = " WHERE " + " AND ".join(where_conditions)
+
+    return base_query, where_clause, params
+
+
 class Repository:
     def __init__(self,
                  config: RepositoryConfig):
@@ -339,6 +463,71 @@ class Repository:
 
                 return [row["name"] for row in cur.fetchall()]
 
+    def get_artists_count(self, filters: Optional[dict] = None) -> int:
+        base_query, where_clause, params = _build_artists_filters(filters)
+
+        query = f"""
+            SELECT COUNT(DISTINCT a.id)
+            {base_query}
+            {where_clause}
+        """
+
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(query, params)
+                return cur.fetchone()["count"]
+
+    def get_artist_at(
+            self,
+            index: int,
+            sort_by: str = "name",
+            sort_order: str = "ASC",
+            filters: Optional[dict] = None
+    ) -> ArtistRecord:
+
+        sort_order = sort_order.upper()
+        sort_order = "ASC" if sort_order not in ["ASC", "DESC"] else sort_order
+
+        if sort_by not in VALID_SORT_FIELDS:
+            sort_by = "name"
+
+        base_query, where_clause, params = _build_artists_filters(filters)
+
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                paginated_query = f"""
+                    SELECT
+                        a.*,
+                        array_remove(array_agg(DISTINCT g.name), NULL) AS genres,
+                        array_remove(array_agg(DISTINCT c.name), NULL) AS countries
+                    {base_query}
+                    {where_clause}
+                    GROUP BY a.id
+                    ORDER BY a.{sort_by} {sort_order}
+                    LIMIT 1 OFFSET %s
+                """
+
+                pagination_params = params + [index]
+
+                cur.execute(paginated_query, pagination_params)
+                row = cur.fetchone()
+
+                return ArtistRecord(
+                            id=row["id"],
+                            name=row["name"],
+                            is_available=row["is_available"],
+                            last_month_listeners=row["last_month_listeners"],
+                            last_month_listeners_delta=row["last_month_listeners_delta"],
+                            tracks_count=row["tracks_count"],
+                            likes_count=row["likes_count"],
+                            ratings_day=row["ratings_day"],
+                            ratings_month=row["ratings_month"],
+                            ratings_week=row["ratings_week"],
+                            is_listened=row["is_listened"],
+                            genres=row["genres"] or [],
+                            countries=row["countries"] or [],
+                        )
+
     def get_artists_page(
             self,
             page: int = 1,
@@ -356,128 +545,10 @@ class Repository:
         if sort_by not in VALID_SORT_FIELDS:
             sort_by = "name"
 
+        base_query, where_clause, params = _build_artists_filters(filters)
+
         with self._connect() as conn:
             with conn.cursor() as cur:
-                base_query = """
-                    FROM artists a
-                    LEFT JOIN artist_genres ag ON a.id = ag.artist_id
-                    LEFT JOIN genres g ON ag.genre_id = g.id
-                    LEFT JOIN artist_countries ac ON a.id = ac.artist_id
-                    LEFT JOIN countries c ON ac.country_id = c.id
-                """
-
-                where_conditions = []
-                params = []
-
-                if filters:
-                    if "is_available" in filters:
-                        if isinstance(filters["is_available"], bool):
-                            where_conditions.append("a.is_available = %s")
-                            params.append(filters["is_available"])
-
-                    if "is_listened" in filters:
-                        if isinstance(filters["is_listened"], bool):
-                            where_conditions.append("a.is_listened = %s")
-                            params.append(filters["is_listened"])
-
-                    if "name_contains" in filters:
-                        if isinstance(filters["name_contains"], str):
-                            where_conditions.append("a.name ILIKE %s")
-                            params.append(f"%{filters['name_contains']}%")
-
-                    if "min_listeners" in filters:
-                        if isinstance(filters["min_listeners"], int):
-                            where_conditions.append("a.last_month_listeners >= %s")
-                            params.append(filters["min_listeners"])
-
-                    if "max_listeners" in filters:
-                        if isinstance(filters["max_listeners"], int):
-                            where_conditions.append("a.last_month_listeners <= %s")
-                            params.append(filters["max_listeners"])
-
-                    if "min_listeners_delta" in filters:
-                        if isinstance(filters["min_listeners_delta"], int):
-                            where_conditions.append("a.last_month_listeners_delta >= %s")
-                            params.append(filters["min_listeners_delta"])
-
-                    if "max_listeners_delta" in filters:
-                        if isinstance(filters["max_listeners_delta"], int):
-                            where_conditions.append("a.last_month_listeners_delta <= %s")
-                            params.append(filters["max_listeners_delta"])
-
-                    if "min_likes" in filters:
-                        if isinstance(filters["min_likes"], int):
-                            where_conditions.append("a.likes_count >= %s")
-                            params.append(filters["min_likes"])
-
-                    if "max_likes" in filters:
-                        if isinstance(filters["max_likes"], int):
-                            where_conditions.append("a.likes_count <= %s")
-                            params.append(filters["max_likes"])
-
-                    if "min_tracks" in filters:
-                        if isinstance(filters["min_tracks"], int):
-                            where_conditions.append("a.tracks_count >= %s")
-                            params.append(filters["min_tracks"])
-
-                    if "max_tracks" in filters:
-                        if isinstance(filters["max_tracks"], int):
-                            where_conditions.append("a.tracks_count <= %s")
-                            params.append(filters["max_tracks"])
-
-                    if "min_ratings_day" in filters:
-                        if isinstance(filters["min_ratings_day"], int):
-                            where_conditions.append("a.ratings_day >= %s")
-                            params.append(filters["min_ratings_day"])
-
-                    if "max_ratings_day" in filters:
-                        if isinstance(filters["max_ratings_day"], int):
-                            where_conditions.append("a.ratings_day <= %s")
-                            params.append(filters["max_ratings_day"])
-
-                    if "min_ratings_month" in filters:
-                        if isinstance(filters["min_ratings_month"], int):
-                            where_conditions.append("a.ratings_month >= %s")
-                            params.append(filters["min_ratings_month"])
-
-                    if "max_ratings_month" in filters:
-                        if isinstance(filters["max_ratings_month"], int):
-                            where_conditions.append("a.ratings_month <= %s")
-                            params.append(filters["max_ratings_month"])
-
-                    if "min_ratings_week" in filters:
-                        if isinstance(filters["min_ratings_week"], int):
-                            where_conditions.append("a.ratings_week >= %s")
-                            params.append(filters["min_ratings_week"])
-
-                    if "max_ratings_week" in filters:
-                        if isinstance(filters["max_ratings_week"], int):
-                            where_conditions.append("a.ratings_week <= %s")
-                            params.append(filters["max_ratings_week"])
-
-                    if "genres" in filters:
-                        genres_list = filters["genres"]
-
-                        if (isinstance(genres_list, list)
-                                and genres_list
-                                and all(isinstance(g, str) for g in genres_list)):
-                            where_conditions.append("g.name = ANY(%s)")
-                            params.append(genres_list)
-
-                    if "countries" in filters:
-                        countries_list = filters["countries"]
-
-                        if (isinstance(countries_list, list)
-                                and countries_list
-                                and all(isinstance(c, str) for c in countries_list)):
-                            where_conditions.append("c.name = ANY(%s)")
-                            params.append(countries_list)
-
-                where_clause = ""
-
-                if where_conditions:
-                    where_clause = " WHERE " + " AND ".join(where_conditions)
-
                 count_query = f"""
                     SELECT COUNT(DISTINCT a.id) AS total
                     {base_query}
