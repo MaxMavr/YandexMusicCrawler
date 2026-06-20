@@ -1,109 +1,125 @@
-* {
-        box-sizing: border-box;
-    }
+.artist-link {
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--color-primary);
+    transition: var(--transition);
+}
 
-    body {
-        margin: 20px;
-        font-family: Arial, sans-serif;
-    }
+.artist-link:hover {
+    color: var(--color-highlight);
+    text-decoration: underline;
+}
 
-    .table-container {
-        width: 100%;
-        overflow-x: auto;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-
-    table {
-        width: 100%;
-        min-width: 800px;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-
-    th,
-    td {
-        border: 1px solid #e5e5e5;
-        padding: 12px;
-        text-align: left;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    th {
-        background: #f7f7f7;
-        position: relative;
-        user-select: none;
-    }
-
-    tr:nth-child(even) {
-        background: #fafafa;
-    }
-
-    #artist-table {
+#artist-table {
     width: 100%;
-    border-collapse: collapse;
-    }
+    border-collapse: separate;
+}
 
-    #artist-table thead {
-        position: sticky;
-        top: 60px; /* высота header */
-        z-index: 999;
-    }
+#artist-table-head th {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 999;
+    background: var(--background-color-primary);
+    border-bottom: var(--border) var(--border-color);
+    text-align: left;
+    font-weight: normal;
+    padding: var(--padding-row);
+}
 
-    #artist-table thead td,
-    #artist-table thead th {
-        background: white;
-        border-bottom: 1px solid #ddd;
-    }
+#artist-table-body td {
+    padding: var(--padding-row);
+}
 
-    /* Ручка изменения размера */
-    .resize-handle {
-        position: absolute;
-        top: 0;
-        right: -3px;
-        width: 6px;
-        height: 100%;
-        cursor: col-resize;
-        z-index: 10;
-    }
+#artist-table-body tr {
+    opacity: 0;
+    animation: fadeInUp 0.2s ease forwards;
+    animation-delay: var(--cascade-delay, 0s);
+}
 
-    .resize-handle:hover {
-        background: rgba(0, 123, 255, 0.2);
-    }
+#artist-table-body tr:nth-child(even) {
+    background: var(--background-color-highlight);
+}
 
-    /* Пагинация */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin-top: 16px;
-    }
 
-    .pagination button {
-        border: 1px solid #ccc;
-        background: white;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
+.name-cell,
+.name-title {
+    width: 300px;
+}
 
-    .pagination button:hover {
-        background: #f0f0f0;
-    }
+.tracks-cell,
+.tracks-title {
+    width: 150px;
+}
 
-    .pagination button.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
+.likes-cell,
+.likes-title {
+    width: 150px;
+}
 
-    .listeners-delta.rise {
-        color: #44944A;
-    }
+.listeners-cell,
+.listeners-title {
+    width: 150px;
+}
 
-    .listeners-delta.fall {
-        color: #C51D34;
+.rating-month-cell,
+.rating-month-title {
+    width: 150px;
+}
+
+.genres-cell,
+.genres-title {
+    width: 300px;
+}
+
+.countries-cell,
+.countries-title {
+    width: 300px;
+}
+
+
+.name-container {
+    display: flex;
+    z-index: 10;
+    justify-content: space-between;
+}
+
+.artist-table-title-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-item);
+    z-index: 10;
+}
+
+.message {
+    text-align: center;
+    margin: 0 auto;
+    padding: var(--padding-item);
+    font-style: italic;
+}
+
+.not-visible {
+    display: none;
+}
+
+.listeners-delta {
+    color: var(--color-secondary);
+}
+
+.listeners-delta.rise {
+    color: var(--color-rise);
+}
+
+.listeners-delta.fall {
+    color: var(--color-fall);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

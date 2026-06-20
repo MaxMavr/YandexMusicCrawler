@@ -1,0 +1,24 @@
+.overlay {
+    position: fixed;
+    z-index: 9999;
+}
+
+
+
+.info-label {
+    background: var(--background-color-primary);
+    color: var(--color-primary);
+    padding: var(--padding-info-label);
+    border-radius: var(--border-radius);
+    border: var(--border) var(--border-color);
+    font-size: 12px;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.select-tags {
+    background: var(--background-color-primary);
+    color: var(--color-primary);
+    padding: var(--padding-tag);
+    border-radius: var(--border-radius);
+}

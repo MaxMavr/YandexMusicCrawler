@@ -1,0 +1,45 @@
+:root {
+  --header-height: 80px;
+  --header-row: 40px;
+
+  --color-highlight: #000000;
+  --color-primary: #3d3d3d;
+  --color-secondary: #959595;
+
+  --background-color-highlight: #f5f5f5;
+  --background-color-primary: #ffffff;
+  
+  --border-color: #e5e5e5;
+
+  --margin-side: 60px;
+
+  --border: .5px solid;
+
+  --padding-item: 8px 18px;
+  --padding-row: 6px 12px;
+  --padding-tag: 3px 6px;
+  --padding-info-label: 3px 6px;
+  --padding-input: 3px 6px;
+
+  --padding-icon: 8px;
+  --gap-item: 6px;
+
+  --transition: all 0.3s cubic-bezier(0.75, 0.35, 0.4, 0.99);
+  --border-radius: 6px;
+
+
+  --color-rise: #1ab952;
+  --color-fall: #ff2f2f;
+
+  --color-tag: var(--background-color-highlight);
+
+  --color-rock:       #fca5a5;
+  --color-rnb:        #fddf7c;
+  --color-rap:        #a7f3d0;
+  --color-folk:       #6ee7b7;
+  --color-soundtrack: #34d399;
+  --color-electronic: #93c5fd;
+  --color-classical:  #818cf8;
+  --color-pop:        #a78bfa;
+  --color-podcast:    #c4b5fd;
+}

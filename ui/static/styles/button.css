@@ -1,0 +1,75 @@
+.button-container {
+  display: flex;
+  gap: var(--gap-item);
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: flex;
+  gap: var(--gap-item);
+  align-items: center;
+
+  border-radius: var(--border-radius);
+  padding: var(--padding-item);
+  transition: var(--transition);
+  font-weight: bold;
+
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+
+  color: var(--color-primary);
+  background-color: var(--background-color-highlight);
+}
+
+
+.button.clean-button {
+  padding: 0;
+  font-weight: normal;
+  background-color: transparent;
+}
+
+.button.clean-button:hover:not(:active) {
+  transform: scale(1, 1);
+  opacity: 100%;
+}
+
+
+.button:hover:not(:active) {
+  transform: scale(1.05, 1.05);
+  opacity: 100%;
+}
+
+.button:active {
+  transition: all 0.1s cubic-bezier(0.75, 0.35, 0.4, 0.99);
+  transform: scale(1, 1);
+}
+
+.button-icon {
+  transition: all 0.3s cubic-bezier(0.75, 0.35, 0.4, 0.99);
+  padding: var(--padding-icon);
+  height: 100%;
+
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+
+  color: var(--color-primary);
+}
+
+.button-icon.refresh:active {
+  transform: rotate(180deg);
+}
+
+.button.running {
+  color: white;
+  background-color: var(--green-color);
+}
+
+.button.stopped {
+  color: white;
+  background-color: var(--red-color);
+}

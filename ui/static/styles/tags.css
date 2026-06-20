@@ -1,0 +1,134 @@
+.tags-container {
+  display: flex;
+  gap: var(--gap-item);
+  align-items: baseline;
+  z-index: 10;
+  flex-wrap: wrap;
+}
+
+
+.tag {
+  border-radius: var(--border-radius);
+  padding: var(--padding-tag);
+  background-color: var(--color-tag);
+  border: var(--border) var(--background-color-primary);
+  white-space: nowrap;
+}
+.tag.rap {
+  background-color: var(--color-rap);
+}
+.tag.rock {
+  background-color: var(--color-rock);
+}
+.tag.electronic {
+  background-color: var(--color-electronic);
+}
+.tag.pop {
+  background-color: var(--color-pop);
+}
+.tag.rnb {
+  background-color: var(--color-rnb);
+}
+.tag.folk {
+  background-color: var(--color-folk);
+}
+.tag.classical {
+  background-color: var(--color-classical);
+}
+.tag.podcast {
+  background-color: var(--color-podcast);
+}
+.tag.soundtrack {
+  background-color: var(--color-soundtrack);
+}
+
+.tags-container.select-tags {
+  flex-direction: column;
+  height: 50vh;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+}
+
+#genres-tags-container {
+  align-items: center;
+}
+
+#countries-tags-container {
+  align-items: center;
+}
+
+.select-tag {
+  background-color: var(--background-color-primary);
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  padding: var(--padding-tag);
+  white-space: nowrap;
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--color-tag);
+}
+
+.select-tag.rap {
+  border-color: var(--color-rap);
+}
+.select-tag.rock {
+  border-color: var(--color-rock);
+}
+.select-tag.electronic {
+  border-color: var(--color-electronic);
+}
+.select-tag.pop {
+  border-color: var(--color-pop);
+}
+.select-tag.rnb {
+  border-color: var(--color-rnb);
+}
+.select-tag.folk {
+  border-color: var(--color-folk);
+}
+.select-tag.classical {
+  border-color: var(--color-classical);
+}
+.select-tag.podcast {
+  border-color: var(--color-podcast);
+}
+.select-tag.soundtrack {
+  border-color: var(--color-soundtrack);
+}
+
+
+.select-tag.selected {
+  background-color: var(--color-tag);
+}
+.select-tag.rap.selected {
+  background-color: var(--color-rap);
+}
+.select-tag.rock.selected {
+  background-color: var(--color-rock);
+}
+.select-tag.electronic.selected {
+  background-color: var(--color-electronic);
+}
+.select-tag.pop.selected {
+  background-color: var(--color-pop);
+}
+.select-tag.rnb.selected {
+  background-color: var(--color-rnb);
+}
+.select-tag.folk.selected {
+  background-color: var(--color-folk);
+}
+.select-tag.classical.selected {
+  background-color: var(--color-classical);
+}
+.select-tag.podcast.selected {
+  background-color: var(--color-podcast);
+}
+.select-tag.soundtrack.selected {
+  background-color: var(--color-soundtrack);
+}
+
+

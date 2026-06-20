@@ -1,0 +1,57 @@
+<svg class="{{ class_name|default('icon') }}" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 8.5 12 8.5 7 8.5">
+            <animate
+            class="anim-asc-upper"
+            attributeName="points"
+            to="17 6 12 11 7 6"
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+            <animate 
+            class="anim-desc-upper"
+            attributeName="points" 
+            to="17 11 12 6 7 11" 
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+            <animate 
+            class="anim-none-upper"
+            attributeName="points" 
+            to="17 8.5 12 8.5 7 8.5" 
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+        </polyline>
+        
+        <polyline points="17 15.5 12 15.5 7 15.5">
+            <animate 
+            class="anim-asc-lower"
+            attributeName="points" 
+            to="17 13 12 18 7 13" 
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+            <animate 
+            class="anim-desc-lower"
+            attributeName="points" 
+            to="17 18 12 13 7 18" 
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+            <animate 
+            class="anim-none-lower"
+            attributeName="points" 
+            to="17 15.5 12 15.5 7 15.5" 
+            dur="0.2s"
+            fill="freeze"
+            begin="indefinite"
+            />
+        </polyline>
+    </g>
+</svg>

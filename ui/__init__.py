@@ -21,10 +21,20 @@ def create_app(repository: Repository) -> Flask:
     #     repository.stop_crawler()
     #     return jsonify({"status": "stopping"})
 
-    @app.route('/crawler/status', methods=['GET'])
-    def status_crawler():
-        running = repository.is_crawler_running()
-        return jsonify({"running": running})
+    # @app.route('/crawler/status', methods=['GET'])
+    # def status_crawler():
+    #     running = repository.is_crawler_running()
+    #     return jsonify({"running": running})
+
+    @app.route('/api/all_genres', methods=['GET'])
+    def get_all_genres():
+        all_genres = repository.get_all_genres()
+        return jsonify(all_genres)
+
+    @app.route('/api/all_countries', methods=['GET'])
+    def get_all_countries():
+        all_countries = repository.get_all_countries()
+        return jsonify(all_countries)
 
     @app.route('/api/artists', methods=['POST'])
     def get_artists():

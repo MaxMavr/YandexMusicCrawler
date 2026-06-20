@@ -1,71 +1,93 @@
-const SCROLL_THRESHOLD = 200;
-const ARTIST_TBODY = document.getElementById('artist-table-body');
-
-
-const LOADING_MESSAGE = document.getElementById('loading-message');
-const EMPTY_MESSAGE = document.getElementById('empty-message');
 const ARTIST_ROW_TEMPLATE = document.getElementById('artist-row-template');
-
-import { queryParams } from './state.js';
-
-let isLoading = false;
-let hasMore = true;
+import { makeGenresTag, makeCountryTag } from './tags.js';
+import { initInfoLabelButtons } from './info.js';
+const CASCADE_DELAY = 0.05;
 
 
-function make_artist_row(artist) {
+const formatNumber = value => value.toLocaleString('ru-RU');
+
+
+function makeArtistRow(artist, index) {
     const row = ARTIST_ROW_TEMPLATE.content.cloneNode(true);
+    const rowElement = row.querySelector('tr');
 
-    const artistCell = row.querySelector('.artist');
-    const link = document.createElement('a');
+    rowElement.style.setProperty('--cascade-delay', `${index * CASCADE_DELAY}s`);
+
+    const nameCell = row.querySelector('.name-cell');
+
+    const link = nameCell.querySelector('.artist-link');
     link.href = `https://music.yandex.ru/artist/${artist.id}`;
-    link.target = '_blank';
     link.textContent = artist.name;
-    artistCell.appendChild(link);
 
-    row.querySelector('.tracks').textContent =
-        artist.tracks_count.toLocaleString('ru-RU');
+    row.querySelector('.tracks-cell').textContent =
+        formatNumber(artist.tracks_count);
 
-    row.querySelector('.likes').textContent =
-        artist.likes_count.toLocaleString('ru-RU');
+    row.querySelector('.likes-cell').textContent =
+        formatNumber(artist.likes_count);
 
     row.querySelector('.listeners').textContent =
-        artist.last_month_listeners.toLocaleString('ru-RU');
+        formatNumber(artist.last_month_listeners);
 
     let deltaCell = row.querySelector('.listeners-delta');
     const deltaValue = artist.last_month_listeners_delta;
-    const isPositive = deltaValue > 0;
-    const absValue = Math.abs(deltaValue);
-    deltaCell.classList.add(isPositive ? 'rise' : 'fall');
-    deltaCell.textContent = `${isPositive ? '+' : '−'}${absValue.toLocaleString('ru-RU')}`;
+    if (deltaValue > 0) {
+        deltaCell.classList.add('rise');
+    } else if (deltaValue < 0) {
+        deltaCell.classList.add('fall');
+    }
+    
+    deltaCell.textContent =
+        `${deltaValue >= 0 ? '+' : '−'}${formatNumber(Math.abs(deltaValue))}`;
+    
+    row.querySelector('.rating-month-cell').textContent =
+        formatNumber(artist.ratings_month);
 
+    const genresContainer = row.querySelector('.genres-cell');
+    genresContainer.appendChild(
+        makeGenresTag(artist.genres)
+    );
 
+    const countryContainer = row.querySelector('.countries-cell');
+    countryContainer.appendChild(
+        makeCountryTag(artist.countries)
+    );
 
-    row.querySelector('.rating-day').textContent =
-        artist.ratings_day;
-
-    row.querySelector('.rating-month').textContent =
-        artist.ratings_month;
-
-    row.querySelector('.rating-week').textContent =
-        artist.ratings_week;
-
-    row.querySelector('.genres').textContent =
-        artist.genres.join(', ');
-
-    row.querySelector('.countries').textContent =
-        artist.countries.join(', ');
+    initInfoLabelButtons(row);
 
     return row;
 }
 
-async function loadMore() {
-    if (isLoading || !hasMore) return;
+const SCROLL_THRESHOLD = 400;
+const ARTIST_TBODY = document.getElementById('artist-table-body');
+const LOADING_MESSAGE = document.getElementById('loading-message');
+const EMPTY_MESSAGE = document.getElementById('empty-message');
+const ARTIST_TOTAL = document.getElementById('artist-total');
+
+import { queryParams } from './state.js';
+let controller;
+let isLoading = false;
+
+
+export async function loadArtistPage(reset = false) {    
+    if (isLoading && !reset) return;
+    
+    
+    if (isLoading || !queryParams.has_more) return;
+
+    if (reset) {
+        controller?.abort();
+        controller = new AbortController();
+    }
 
     isLoading = true;
-    LOADING_MESSAGE.style.display = 'block';
-    EMPTY_MESSAGE.style.display = 'none';
+    LOADING_MESSAGE.classList.remove('not-visible');
+    EMPTY_MESSAGE.classList.add('not-visible');
 
     try {
+        if (queryParams.page === 1) {
+            ARTIST_TBODY.replaceChildren();
+        }
+
         const response = await fetch('/api/artists', {
             method: 'POST',
             headers: {
@@ -75,42 +97,38 @@ async function loadMore() {
         });
 
         const data = await response.json();
+        const fragment = document.createDocumentFragment();
 
-        if (queryParams.page === 1) {
-            ARTIST_TBODY.innerHTML = '';
-        }
-
-        data.artists.forEach(artist => {
-            let artist_row = make_artist_row(artist);
-
-            console.log(artist_row);
-
-            ARTIST_TBODY.appendChild(artist_row);
+        data.artists.forEach((artist, index) => {
+            fragment.appendChild(makeArtistRow(artist, index));
         });
 
+        ARTIST_TBODY.appendChild(fragment);
+
         if (data.total === 0) {
-            EMPTY_MESSAGE.style.display = 'block';
+            EMPTY_MESSAGE.classList.remove('not-visible');
         }
 
-        hasMore = data.has_next;
-        queryParams.page = data.page + 1;
+        ARTIST_TOTAL.textContent =
+            formatNumber(data.total);
+
+        Object.assign(queryParams, {
+            has_more: data.has_next,
+            page: data.page + 1
+        });
 
     } catch (error) {
         console.error('Ошибка загрузки:', error);
     } finally {
         isLoading = false;
-        LOADING_MESSAGE.style.display = 'none';
+        LOADING_MESSAGE.classList.add('not-visible');
     }
 }
 
-window.addEventListener('scroll', () => {
-    const scrollTop = document.documentElement.scrollTop;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = document.documentElement.clientHeight;
-
-    if (scrollTop + clientHeight >= scrollHeight - SCROLL_THRESHOLD) {
-        loadMore();
+const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+        loadArtistPage();
     }
 });
 
-loadMore();
+observer.observe(document.getElementById('load-trigger'));

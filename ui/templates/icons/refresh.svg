@@ -1,0 +1,18 @@
+<svg class="{{ class_name|default('icon') }}" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="23 4 23 10 17 10"/>
+        <polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+
+        <animateTransform
+            class="refresh-animation"
+            attributeName="transform"
+            type="rotate"
+            from="0 12 12"
+            to="180 12 12"
+            dur="0.5s"
+            begin="indefinite"
+            fill="freeze"
+        />
+    </g>
+</svg>

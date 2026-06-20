@@ -5,68 +5,196 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Артисты</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='includes/music-yandex.svg') }}" />
 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/const.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/reset.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/base.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/table.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/header.css') }}" />
-</head>
-<body>
-    <header>
-      <h1>
-        Артисты
-      </h1>
-    </header>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/button.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/icons.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/input.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/tags.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/overlay.css') }}" />
+  </head>
 
-    <table id="artist-table">
-          <thead id="artist-table-head">
-              <tr>
-                <td>Название</td>
+  <body>
+    <main>
+      <header>
+        <div class="header-container">
+          <h1>Артисты</h1>
+        </div>
 
-                <td>Треки</td>
-                <td>Лайки</td>
-                <td>Слушатели</td>
+        <button class="button info-label-button" data-text="Обновить таблицу" id="refresh-button">
+          {% include 'icons/refresh.svg' %}
+          <span id="artist-total">—</span>
+        </button>
+      </header>
 
-                <td>Рейтинг день</td>
-                <td>Рейтинг месяц</td>
-                <td>Рейтинг неделя</td>
+      <table id="artist-table">
+        <thead id="artist-table-head">
+            <tr>
+              <th class="name-title">
+                <div class="artist-table-title-container">
+                  <div class="name-container">
+                    <div class="button-container">
+                      <button class="button clean-button sorting-button activated info-label-button" data-text="Отсортировать по названию" data-sort-by="name" data-sort-order="ASC">
+                        <div>Название</div>
+                        {% include 'icons/sorting.svg' %}
+                      </button>
+                    </div>
+                  </div>
 
-                <td>Жанры</td>
-                <td>Страны</td>
-              </tr>
-          </thead>
-          <tbody id="artist-table-body">
-              <!-- Данные будут загружаться сюда -->
-          </tbody>
+                  <input id="name_contains" class="input" type="text" placeholder="Поиск…">
+                </div>
+              </th>
+
+              <th class="tracks-title">
+                <div class="artist-table-title-container">
+                  <div class="button-container">
+                    <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
+                      <div>Треки</div>
+                      {% include 'icons/sorting.svg' %}
+                    </button>
+                  </div>
+
+                  <input id="min_tracks" class="input info-label-button" data-text="Минимальное количество треков" type="number" placeholder="от">
+                  <input id="max_tracks" class="input info-label-button" data-text="Максимальное количество треков" type="number" placeholder="до">
+                </div>
+              </th>
+
+              <th class="likes-title">
+                <div class="artist-table-title-container">
+                  <div class="button-container">
+                    <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по лайкам" data-sort-by="likes_count" data-sort-order="ASC">
+                      <div>Лайки</div>
+                      {% include 'icons/sorting.svg' %}
+                    </button>
+                  </div>
+
+                  <input id="min_likes" class="input info-label-button" data-text="Минимальное количество лайков" type="number" placeholder="от">
+                  <input id="max_likes" class="input info-label-button" data-text="Максимальное количество лайков" type="number" placeholder="до">
+                </div>
+              </th>
+
+              <th class="listeners-title">
+                <div class="artist-table-title-container">
+                  <div class="button-container">
+                    <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
+                      <div>Слушатели</div>
+                      {% include 'icons/sorting.svg' %}
+                    </button>
+                  </div>
+                  
+                  <input id="min_listeners" class="input info-label-button" data-text="Минимальное количество слушателей" type="number" placeholder="от">
+                  <input id="max_listeners" class="input info-label-button" data-text="Максимальное количество слушателей" type="number" placeholder="до">
+                </div>
+              </th>
+
+              <th class="rating-month-title">
+                <div class="artist-table-title-container">
+                  <div class="button-container">
+                    <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по рейтингу" data-sort-by="ratings_month" data-sort-order="ASC">
+                      <div>Рейтинг</div>
+                      {% include 'icons/sorting.svg' %}
+                    </button>
+                  </div>
+
+                  <input id="min_ratings_month" class="input info-label-button" data-text="Минимальный рейтинг" type="number" placeholder="от">
+                  <input id="max_ratings_month" class="input info-label-button" data-text="Максимальный рейтинг" type="number" placeholder="до">
+                </div>
+              </th>
+
+              <th class="genres-title">
+                <div class="artist-table-title-container">
+                  <span>Жанры</span>
+                  <div class="tags-container" id="genres-tags-container">
+                    <button class="button clean-button tags-button info-label-button" data-text="Изменить жанры сортировки" data-type="genres">
+                      {% include 'icons/plus_square.svg' %}
+                    </button>
+                  </div>
+                </div>
+              </th>
+
+              <th class="countries-title">
+                <div class="artist-table-title-container">
+                  <span>Страны</span>
+                  <div class="tags-container" id="countries-tags-container">
+                    <button class="button clean-button tags-button info-label-button" data-text="Изменить страны сортировки" data-type="countries">
+                      {% include 'icons/plus_square.svg' %}
+                    </button>
+                  </div>
+                </div>
+              </th>
+            </tr>
+        </thead>
+        <tbody id="artist-table-body">
+            <!-- Данные -->
+        </tbody>
       </table>
+
+      <div id="load-trigger"></div>
+      <div id="loading-message" class="message">Загрузка...</div>
+      <div id="empty-message" class="message not-visible">Пусто</div>
+    </main>
+
+    <template id="tags-overlay-template">
+      <div class="overlay">
+      </div>
+    </template>
+
+    <template id="info-label-template">
+      <div class="overlay info-label"></div>
+    </template>
+
+    <template id="tags-container-template">
+      <div class="tags-container"></div>
+    </template>
+
+    <template id="tag-template">
+      <div class="tag"></div>
+    </template>
 
 
     <template id="artist-row-template">
       <tr>
-        <td class="artist"></td>  <!-- name --> <!-- id -->
+        <td class="name-cell">
+          <div class="name-container">
+            <a class="artist-link info-label-button" data-text="Ссылка на Яндекс Музыку" href="" target="_blank"></a>
 
-        <td class="tracks"></td>  <!-- tracks_count -->
-        <td class="likes"></td>  <!-- likes_count -->
-        <td>
-          <span class="listeners"></span>
+            <!-- <input class="is-listened info-label-button" data-text="Прослушано" type="checkbox"> -->
+          </div>
+        </td>
+
+        <td class="tracks-cell"></td>
+        <td class="likes-cell"></td>
+        <td class="listeners-cell">
+          <span class="listeners"></span><br>
           <span class="listeners-delta"></span>
-        </td>  <!-- last_month_listeners -->  <!-- last_month_listeners_delta -->
+        </td>
 
-        <td class="rating-day"></td>  <!-- ratings_day -->
-        <td class="rating-month"></td>  <!-- ratings_month -->
-        <td class="rating-week"></td>  <!-- ratings_week -->
+        <td class="rating-month-cell"></td>
 
-        <td class="genres"></td>  <!-- genres -->
-        <td class="countries"></td>  <!-- countries -->
+        <td class="genres-cell"></td>
+        <td class="countries-cell"></td>
       </tr>
-
-      <!-- is_listened -->
-  </template>
-
-    <div id="loading-message" class="message" style="display: none;">Загрузка...</div>
-    <div id="empty-message" class="message" style="display: none;">Пусто</div>
+    </template>
 
     <script type="module"
         src="{{ url_for('static', filename='scripts/loading.js') }}">
     </script>
-</body>
+
+    <script type="module"
+        src="{{ url_for('static', filename='scripts/input.js') }}">
+    </script>
+
+    <script type="module"
+        src="{{ url_for('static', filename='scripts/info.js') }}">
+    </script>
+
+    <script type="module"
+        src="{{ url_for('static', filename='scripts/select_tag.js') }}">
+    </script>
+  </body>
 </html>

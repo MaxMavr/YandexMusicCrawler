@@ -1,0 +1,17 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: var(--header-height) var(--margin-side);
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 16px;
+    color: var(--color-primary);
+    background-color: var(--background-color-primary);
+}
+
+/* main {
+    width: 80%;
+    margin: auto 0;
+} */
+
