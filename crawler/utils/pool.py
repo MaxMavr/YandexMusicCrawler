@@ -18,8 +18,6 @@ class Pool:
         self._running = False
         self._dirty = False
 
-        self._load()
-
     async def _load(self):
         if not self.file.exists():
             async with aiofiles.open(self.file, "w", encoding="utf-8") as f:

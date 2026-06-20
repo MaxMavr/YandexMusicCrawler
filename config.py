@@ -33,7 +33,7 @@ class CrawlerConfig:
     rate_limiter: float = 3  # 3 запроса/сек
     refresh_interval = 30 * 24 * 60 * 60  # 30 дней
     range_artist_id = Range(min=1, max=20_000_000)
-    strategy = 'similar'  # 'random', 'order asc', 'order desc', 'similar'
+    strategy = 'similar'  # 'order', 'update', 'similar', 'similar-random', 'random'
 
 
 @dataclass

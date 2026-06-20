@@ -1,5 +1,5 @@
+from random import randrange
 from flask import Flask, render_template, request, jsonify
-
 from db import Repository
 
 
