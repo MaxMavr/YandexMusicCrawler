@@ -5,7 +5,7 @@ function initInput() {
     const inputs = document.querySelectorAll('.input'); 
     
     inputs.forEach(input => {
-        input.addEventListener('keyup', (e) => {
+        input.addEventListener('keyup', e => {
             if (e.key === 'Enter') handleInput(e);
         });
 

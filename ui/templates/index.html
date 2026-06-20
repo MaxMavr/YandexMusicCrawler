@@ -40,7 +40,7 @@
                   <div class="name-container">
                     <div class="button-container">
                       <button class="button clean-button sorting-button activated info-label-button" data-text="Отсортировать по названию" data-sort-by="name" data-sort-order="ASC">
-                        <div>Название</div>
+                        <span>Название</span>
                         {% include 'icons/sorting.svg' %}
                       </button>
                     </div>
@@ -54,7 +54,7 @@
                 <div class="artist-table-title-container">
                   <div class="button-container">
                     <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
-                      <div>Треки</div>
+                      <span>Треки</span>
                       {% include 'icons/sorting.svg' %}
                     </button>
                   </div>
@@ -68,7 +68,7 @@
                 <div class="artist-table-title-container">
                   <div class="button-container">
                     <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по лайкам" data-sort-by="likes_count" data-sort-order="ASC">
-                      <div>Лайки</div>
+                      <span>Лайки</span>
                       {% include 'icons/sorting.svg' %}
                     </button>
                   </div>
@@ -82,7 +82,7 @@
                 <div class="artist-table-title-container">
                   <div class="button-container">
                     <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
-                      <div>Слушатели</div>
+                      <span>Слушатели</span>
                       {% include 'icons/sorting.svg' %}
                     </button>
                   </div>
@@ -96,7 +96,7 @@
                 <div class="artist-table-title-container">
                   <div class="button-container">
                     <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по рейтингу" data-sort-by="ratings_month" data-sort-order="ASC">
-                      <div>Рейтинг</div>
+                      <span>Рейтинг</span>
                       {% include 'icons/sorting.svg' %}
                     </button>
                   </div>
@@ -109,7 +109,8 @@
               <th class="genres-title">
                 <div class="artist-table-title-container">
                   <span>Жанры</span>
-                  <div class="tags-container" id="genres-tags-container">
+                  <div class="tags-container">
+                    <div class="tags-container" id="genres-tags-container"></div>
                     <button class="button clean-button tags-button info-label-button" data-text="Изменить жанры сортировки" data-type="genres">
                       {% include 'icons/plus_square.svg' %}
                     </button>
@@ -120,7 +121,8 @@
               <th class="countries-title">
                 <div class="artist-table-title-container">
                   <span>Страны</span>
-                  <div class="tags-container" id="countries-tags-container">
+                  <div class="tags-container">
+                    <div class="tags-container" id="countries-tags-container"></div>
                     <button class="button clean-button tags-button info-label-button" data-text="Изменить страны сортировки" data-type="countries">
                       {% include 'icons/plus_square.svg' %}
                     </button>
@@ -138,6 +140,12 @@
       <div id="loading-message" class="message">Загрузка...</div>
       <div id="empty-message" class="message not-visible">Пусто</div>
     </main>
+
+    <!-- <template id="tags-overlay-template">
+      <button class="button clean-button tags-button info-label-button" data-text="Очистить" data-type="countries">
+        {% include 'icons/plus_square.svg' %}
+      </button>
+    </template> -->
 
     <template id="tags-overlay-template">
       <div class="overlay">

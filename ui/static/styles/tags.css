@@ -1,11 +1,10 @@
 .tags-container {
   display: flex;
   gap: var(--gap-item);
-  align-items: baseline;
+  align-items: center;
   z-index: 10;
   flex-wrap: wrap;
 }
-
 
 .tag {
   border-radius: var(--border-radius);
@@ -45,16 +44,9 @@
 .tags-container.select-tags {
   flex-direction: column;
   height: 50vh;
+  align-items: flex-start;
   overflow-x: auto;
   flex-wrap: nowrap;
-}
-
-#genres-tags-container {
-  align-items: center;
-}
-
-#countries-tags-container {
-  align-items: center;
 }
 
 .select-tag {
@@ -67,7 +59,7 @@
   padding: var(--padding-tag);
   white-space: nowrap;
   border-style: solid;
-  border-width: 2px;
+  border-width: 1px;
   border-color: var(--color-tag);
 }
 

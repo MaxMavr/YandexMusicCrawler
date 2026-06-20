@@ -1,169 +1,89 @@
 const TAGS_CONTAINER_TEMPLATE = document.getElementById('tags-container-template');
 const TAG_TEMPLATE = document.getElementById('tag-template');
 
-const genreColors = [
-    {
-        match: [
-            'rap',
-            'rusrap',
-            'foreignrap',
-            'turkishrap',
-            'arabicrap',
-            'moroccanrap',
-            'kazakhrap',
-            'uzbekrap',
-            'israelirap',
-            'levantrap'
-        ],
-        class: 'rap'
-    },
+let genreColors = {};
+let genreDisplayName = [];
 
-    {
-        match: [
-            'rock',
-            'metal',
-            'punk',
-            'hardcore',
-            'posthardcore',
-            'numetal'
-        ],
-        class: 'rock'
-    },
+async function loadData() {
+    try {
+        const [colorsRes, displayRes] = await Promise.all([
+            fetch('/api/genre_colors'),
+            fetch('/api/genre_display_name')
+        ]);
+        
+        genreColors = await colorsRes.json();
+        genreDisplayName = await displayRes.json();
 
-    {
-        match: [
-            'electronic',
-            'electronics',
-            'edm',
-            'techno',
-            'house',
-            'trance',
-            'dubstep',
-            'dnb',
-            'breakbeat',
-            'garage',
-            'dance',
-            'idm',
-            'phonk'
-        ],
-        class: 'electronic'
-    },
-
-    {
-        match: [
-            'pop',
-            'hyperpop',
-            'kpop',
-            'estrada'
-        ],
-        class: 'pop'
-    },
-
-    {
-        match: [
-            'jazz',
-            'blues',
-            'soul',
-            'funk',
-            'rnb',
-            'bebop',
-            'bigbands'
-        ],
-        class: 'rnb'
-    },
-
-    {
-        match: [
-            'folk',
-            'country',
-            'celtic',
-            'african',
-            'balkan',
-            'armenian',
-            'georgian',
-            'tatar',
-            'jewish'
-        ],
-        class: 'folk'
-    },
-
-    {
-        match: [
-            'classical',
-            'ambient',
-            'newage',
-            'meditation',
-            'relax'
-        ],
-        class: 'classical'
-    },
-
-    {
-        match: [
-            'audiobook',
-            'fiction',
-            'literature',
-            'memoirs',
-            'poetry',
-            'podcast'
-        ],
-        class: 'podcast'
-    },
-
-    {
-        match: [
-            'anime',
-            'videogame',
-            'soundtrack',
-            'films',
-            'tvseries',
-            'animated'
-        ],
-        class: 'soundtrack'
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
     }
-];
+}
 
-function getGenreClass(genre) {
-    genre = genre.toLowerCase();
+function getGenreClass(genreCode) {
+    genreCode = genreCode.toLowerCase();
 
     const found = genreColors.find(group =>
-        group.match.some(keyword => genre.includes(keyword))
+        group.match.some(keyword => genreCode.includes(keyword))
     );
 
     return found?.class || '';
 }
 
-export function makeGenresTag(genres) {
+
+function getGenreDisplayName(genreCode) {
+    genreCode = genreCode.toLowerCase();
+    
+    return genreDisplayName[genreCode] || genreCode;
+}
+
+export function getTagsContainer() {
     const container = TAGS_CONTAINER_TEMPLATE.content.cloneNode(true);
-    const tagsContainer = container.querySelector('.tags-container');
+    return container.querySelector('.tags-container');
+}
+
+export function makeGenreTag(genreCode) {
+    const tag = TAG_TEMPLATE.content.cloneNode(true);
+    const element = tag.querySelector('.tag');
+    element.textContent = getGenreDisplayName(genreCode);
+    element.dataset.tagCode = genreCode;
+
+    const cleanGenre = getGenreClass(genreCode) ?? '';
+    if (cleanGenre) {
+        element.classList.add(cleanGenre);
+    }
+
+    return element;
+}
+
+export function makeCountryTag(countryCode) {
+    const tag = TAG_TEMPLATE.content.cloneNode(true);
+    const element = tag.querySelector('.tag');
+    element.textContent = countryCode;
+    element.dataset.tagCode = countryCode;
+
+    return element;
+}
+
+export function makeGenreTags(genres) {
+    const tagsContainer = getTagsContainer();
 
     genres.forEach(genre => {
-        const tag = TAG_TEMPLATE.content.cloneNode(true);
-        const element = tag.querySelector('.tag');
-        element.textContent = genre;
-
-        const cleanGenre = getGenreClass(genre) ?? '';
-        if (cleanGenre) {
-            element.classList.add(cleanGenre);
-        }
-
+        const tag = makeGenreTag(genre)
         tagsContainer.appendChild(tag);
     });
 
     return tagsContainer;
 }
 
-
-export function makeCountryTag(countries) {
-    const container = TAGS_CONTAINER_TEMPLATE.content.cloneNode(true);
-    const tagsContainer = container.querySelector('.tags-container');
+export function makeCountryTags(countries) {
+    const tagsContainer = getTagsContainer();
 
     countries.forEach(country => {
-        const tag = TAG_TEMPLATE.content.cloneNode(true);
-        const element = tag.querySelector('.tag');
-        element.textContent = country;
+        const tag = makeCountryTag(country)
         tagsContainer.appendChild(tag);
     });
 
     return tagsContainer;
 }
+
+loadData();

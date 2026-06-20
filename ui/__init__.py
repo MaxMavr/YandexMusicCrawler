@@ -1,5 +1,5 @@
 from random import randrange
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from db import Repository
 
 
@@ -19,6 +19,14 @@ def create_app(repository: Repository) -> Flask:
     def get_all_countries():
         all_countries = repository.get_all_countries()
         return jsonify(all_countries)
+
+    @app.route('/api/genre_colors')
+    def get_genre_colors():
+        return send_from_directory('static', 'genre_colors.json')
+
+    @app.route('/api/genre_display_name')
+    def get_genre_display_name():
+        return send_from_directory('static', 'genre_display_name.json')
 
     @app.route('/api/random_artist', methods=['POST'])
     def get_random_artist():

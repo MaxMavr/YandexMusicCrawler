@@ -1,5 +1,5 @@
 const ARTIST_ROW_TEMPLATE = document.getElementById('artist-row-template');
-import { makeGenresTag, makeCountryTag } from './tags.js';
+import { makeGenreTags, makeCountryTags } from './tags.js';
 import { initInfoLabelButtons } from './info.js';
 const CASCADE_DELAY = 0.05;
 
@@ -44,12 +44,12 @@ function makeArtistRow(artist, index) {
 
     const genresContainer = row.querySelector('.genres-cell');
     genresContainer.appendChild(
-        makeGenresTag(artist.genres)
+        makeGenreTags(artist.genres)
     );
 
     const countryContainer = row.querySelector('.countries-cell');
     countryContainer.appendChild(
-        makeCountryTag(artist.countries)
+        makeCountryTags(artist.countries)
     );
 
     initInfoLabelButtons(row);

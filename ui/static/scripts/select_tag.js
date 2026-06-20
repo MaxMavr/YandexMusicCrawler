@@ -3,7 +3,7 @@ const TAGS_OVERLAY_TEMPLATE = document.getElementById('tags-overlay-template');
 const FILTER_CONFIG = {
     genres: {
         url: '/api/all_genres',
-        make: makeGenresTag,
+        make: makeGenreTag,
         selected: queryParams.filters.genres,
         container: document.getElementById('genres-tags-container')
     },
@@ -17,7 +17,7 @@ const FILTER_CONFIG = {
 
 import { queryParams, updateQueryParams } from './state.js';
 import { loadArtistPage } from './loading.js';
-import { makeGenresTag, makeCountryTag } from './tags.js';
+import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
 
 function initTagsButtons() {
     document
@@ -39,32 +39,30 @@ async function handleTagsButtonClick(event) {
     try {
         const response = await fetch(config.url);
         const data = await response.json();
+        const tagsContainer = getTagsContainer();
 
-        const tags = config.make(data);
-
-        tags.querySelectorAll('.tag').forEach(tag => {
-            const text = tag.textContent.trim();
-
-            tag.classList.add('select-tag');
+        data.forEach(tagCode => {
+            const tag = config.make(tagCode);
+            tag.classList.add('select-tag')
             tag.classList.remove('tag');
 
-            if (config.selected.includes(text)) {
+            if (config.selected.includes(tagCode)) {
                 tag.classList.add('selected');
             }
 
             tag.addEventListener('click', e => {
-                tag.classList.add('selected');
                 handleTagMenuClick(
                     e,
                     config.container,
                     config.selected
                 );
             });
+
+            tagsContainer.appendChild(tag);
         });
 
-        tags.classList.add('select-tags');
-
-        createOverlay(button, tags);
+        tagsContainer.classList.add('select-tags');
+        createOverlay(button, tagsContainer);
 
     } catch (error) {
         console.error('Ошибка загрузки тегов:', error);
@@ -107,40 +105,60 @@ function createOverlay(button, tags) {
 
 function handleTagMenuClick(event, container, selected) {
     const tag = event.currentTarget;
-    const value = tag.textContent.trim();
+    const tagCode = tag.dataset.tagCode;
 
-    if (selected.includes(value)) {
-        return;
+    if (selected.includes(tagCode)) {
+        tag.classList.remove('selected');
+        removeTag(tagCode, selected);
+    } else {
+        tag.classList.add('selected');
+        addTag(tagCode, selected);
     }
 
-    selected.push(value);
-
-    const clonedTag = tag.cloneNode(true);
-
-    clonedTag.addEventListener('click', e => {
-        handleTagClick(e, selected);
-        clonedTag.remove();
-    });
-
-    container.prepend(clonedTag);
-
-    updateQueryParams({page: 1, has_more: true,});
-    loadArtistPage(true);
+    updateTagFilter();
 }
 
 function handleTagClick(event, selected) {
     const tag = event.currentTarget;
-    const value = tag.textContent.trim();
-    tag.classList.remove('selected');
+    const tagCode = tag.dataset.tagCode;
+    
+    removeTag(tagCode, selected);
+    updateTagFilter();
+}
 
-    const index = selected.indexOf(value);
-
-    if (index !== -1) {
-        selected.splice(index, 1);
-    }
-
+function updateTagFilter() {
     updateQueryParams({page: 1, has_more: true,});
+    renderSelectedTags();
     loadArtistPage(true);
+}
+
+
+function addTag(tagCode, selected) {    
+    selected.push(tagCode);
+}
+
+function removeTag(tagCode, selected) {
+    const index = selected.indexOf(tagCode);
+    if (index !== -1) { selected.splice(index, 1); }
+}
+
+function renderSelectedTags() {
+    Object.values(FILTER_CONFIG).forEach(config => {
+        config.container.replaceChildren();
+
+        config.selected.forEach(tagCode => {
+            const tag = config.make(tagCode);
+            tag.classList.add('select-tag');
+            tag.classList.add('selected');
+            tag.classList.remove('tag');
+            
+            tag.addEventListener('click', (e) => {
+                handleTagClick(e, config.selected)
+            });
+
+            config.container.append(tag);
+        });
+    });
 }
 
 initTagsButtons();
