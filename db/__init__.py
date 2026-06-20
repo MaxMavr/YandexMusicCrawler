@@ -10,8 +10,8 @@ from db.models import ArtistRecord, ArtistsPage
 
 VALID_SORT_FIELDS = [
     "id", "name", "last_month_listeners", "last_month_listeners_delta",
-    "tracks_count", "likes_count", "ratings_day", "ratings_month",
-    "ratings_week", "is_available", "is_listened"
+    "tracks_count", "likes_count", "ratings_month",
+    "is_available", "is_listened"
 ]
 
 
@@ -112,16 +112,6 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
                 where_conditions.append("a.tracks_count <= %s")
                 params.append(filters["max_tracks"])
 
-        if "min_ratings_day" in filters:
-            if isinstance(filters["min_ratings_day"], int):
-                where_conditions.append("a.ratings_day >= %s")
-                params.append(filters["min_ratings_day"])
-
-        if "max_ratings_day" in filters:
-            if isinstance(filters["max_ratings_day"], int):
-                where_conditions.append("a.ratings_day <= %s")
-                params.append(filters["max_ratings_day"])
-
         if "min_ratings_month" in filters:
             if isinstance(filters["min_ratings_month"], int):
                 where_conditions.append("a.ratings_month >= %s")
@@ -131,16 +121,6 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
             if isinstance(filters["max_ratings_month"], int):
                 where_conditions.append("a.ratings_month <= %s")
                 params.append(filters["max_ratings_month"])
-
-        if "min_ratings_week" in filters:
-            if isinstance(filters["min_ratings_week"], int):
-                where_conditions.append("a.ratings_week >= %s")
-                params.append(filters["min_ratings_week"])
-
-        if "max_ratings_week" in filters:
-            if isinstance(filters["max_ratings_week"], int):
-                where_conditions.append("a.ratings_week <= %s")
-                params.append(filters["max_ratings_week"])
 
         if "genres" in filters:
             genres_list = filters["genres"]
@@ -191,10 +171,7 @@ class Repository:
                         
                         tracks_count INTEGER NOT NULL,
                         likes_count INTEGER NOT NULL,
-                        
-                        ratings_day INTEGER NOT NULL,
                         ratings_month INTEGER NOT NULL,
-                        ratings_week INTEGER NOT NULL,
                         
                         date_recording TIMESTAMP NOT NULL,
                         
@@ -233,45 +210,7 @@ class Repository:
                         PRIMARY KEY (artist_id, country_id)
                     );
                 """)
-
-                # cur.execute("""
-                #     CREATE TABLE IF NOT EXISTS crawler_lock (
-                #         id BOOLEAN PRIMARY KEY DEFAULT TRUE,
-                #         running BOOLEAN NOT NULL DEFAULT FALSE
-                #     );
-                #     INSERT INTO crawler_lock (id, running)
-                #     VALUES (TRUE, FALSE)
-                #     ON CONFLICT (id) DO NOTHING;
-                # """)
             conn.commit()
-
-    # def is_crawler_running(self) -> bool:
-    #     with self._connect() as conn:
-    #         with conn.cursor() as cur:
-    #             cur.execute("SELECT running FROM crawler_lock WHERE id = TRUE")
-    #             result = cur.fetchone()
-    #             return result["running"] if result else False
-    #
-    # def try_start_crawler(self) -> bool:
-    #     with self._connect() as conn:
-    #         with conn.cursor() as cur:
-    #             cur.execute("""
-    #                 UPDATE crawler_lock
-    #                 SET running = TRUE
-    #                 WHERE id = TRUE AND running = FALSE
-    #                 RETURNING running;
-    #             """)
-    #             result = cur.fetchone()
-    #             return result is not None
-    #
-    # def stop_crawler(self) -> None:
-    #     with self._connect() as conn:
-    #         with conn.cursor() as cur:
-    #             cur.execute("""
-    #                 UPDATE crawler_lock
-    #                 SET running = FALSE
-    #                 WHERE id = TRUE;
-    #             """)
 
     def add_artist(
             self,
@@ -289,12 +228,10 @@ class Repository:
                         name,
                         tracks_count,
                         likes_count,
-                        ratings_day,
                         ratings_month,
-                        ratings_week,
                         is_listened
                     )
-                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     artist.id,
                     artist.last_month_listeners,
@@ -303,9 +240,7 @@ class Repository:
                     artist.name,
                     artist.tracks_count,
                     artist.likes_count,
-                    artist.ratings_day,
                     artist.ratings_month,
-                    artist.ratings_week,
                     False,
                 ))
 
@@ -328,9 +263,7 @@ class Repository:
                         is_available = %s,
                         tracks_count = %s,
                         likes_count = %s,
-                        ratings_day = %s,
                         ratings_month = %s,
-                        ratings_week = %s
                     WHERE id = %s
                 """, (
                     artist.last_month_listeners,
@@ -338,9 +271,7 @@ class Repository:
                     artist.is_available,
                     artist.tracks_count,
                     artist.likes_count,
-                    artist.ratings_day,
                     artist.ratings_month,
-                    artist.ratings_week,
                     artist.id,
                 ))
 
@@ -408,9 +339,7 @@ class Repository:
                     tracks_count=row["tracks_count"],
                     likes_count=row["likes_count"],
 
-                    ratings_day=row["ratings_day"],
                     ratings_month=row["ratings_month"],
-                    ratings_week=row["ratings_week"],
 
                     is_listened=row["is_listened"],
                 )
@@ -520,9 +449,7 @@ class Repository:
                             last_month_listeners_delta=row["last_month_listeners_delta"],
                             tracks_count=row["tracks_count"],
                             likes_count=row["likes_count"],
-                            ratings_day=row["ratings_day"],
                             ratings_month=row["ratings_month"],
-                            ratings_week=row["ratings_week"],
                             is_listened=row["is_listened"],
                             genres=row["genres"] or [],
                             countries=row["countries"] or [],
@@ -588,9 +515,7 @@ class Repository:
                             last_month_listeners_delta=row["last_month_listeners_delta"],
                             tracks_count=row["tracks_count"],
                             likes_count=row["likes_count"],
-                            ratings_day=row["ratings_day"],
                             ratings_month=row["ratings_month"],
-                            ratings_week=row["ratings_week"],
                             is_listened=row["is_listened"],
                             genres=row["genres"] or [],
                             countries=row["countries"] or [],

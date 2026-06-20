@@ -32,9 +32,7 @@ def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
     likes_count = _artist.get('likesCount', 0)
 
     _ratings = _artist.get('ratings', {})
-    ratings_day = _ratings.get('day', 0)
     ratings_month = _ratings.get('month', 0)
-    ratings_week = _ratings.get('week', 0)
 
     _stats = result.get('stats', {})
     last_month_listeners = _stats.get('lastMonthListeners', 0)
@@ -58,9 +56,7 @@ def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
             countries=countries,
             tracks_count=tracks_count,
             likes_count=likes_count,
-            ratings_day=ratings_day,
             ratings_month=ratings_month,
-            ratings_week=ratings_week
         ),
         similar_artist_ids=similar_artist_ids
     )

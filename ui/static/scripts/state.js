@@ -13,12 +13,8 @@ export let queryParams = {
         max_likes: null,
         min_tracks: null,
         max_tracks: null,
-        min_ratings_day: null,
-        max_ratings_day: null,
         min_ratings_month: null,
         max_ratings_month: null,
-        min_ratings_week: null,
-        max_ratings_week: null,
 
         genres: [],
         countries: [],

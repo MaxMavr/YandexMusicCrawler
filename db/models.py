@@ -16,9 +16,7 @@ class ArtistRecord:
     tracks_count: int
     likes_count: int
 
-    ratings_day: int
     ratings_month: int
-    ratings_week: int
 
     is_listened: bool = False
 
@@ -33,9 +31,7 @@ class ArtistRecord:
             'countries': self.countries,
             'tracks_count': self.tracks_count,
             'likes_count': self.likes_count,
-            'ratings_day': self.ratings_day,
             'ratings_month': self.ratings_month,
-            'ratings_week': self.ratings_week,
             'is_listened': self.is_listened
         }
 
