@@ -1,6 +1,5 @@
 from random import randint
 import threading
-from datetime import timedelta
 from typing import Literal, Optional
 
 from config import CrawlerConfig
@@ -46,7 +45,18 @@ class Crawler:
                     await self._process_artist(current_id)
                 except Exception as e:
                     print(f'Crawler: Failed to process {current_id}: {e}')
-                print(f'Crawler: id {current_id:<10} len {len(self.ids_pool):<10}')
+
+                print(f'Crawler: id {current_id:<10}', end='')
+
+                match self.strategy:
+                    case 'order':
+                        print(f'| max id: {self.range_artist_id.max} | strategy: order')
+                    case 'similar':
+                        print(f'| pool: {len(self.ids_pool):<10} | strategy: similar')
+                    case 'similar-random':
+                        print(f'| pool: {len(self.ids_pool):<10} | strategy: similar-random')
+                    case 'update':
+                        print(f'| index: {self.current_update_index:>10} / {self.max_update_index:<10} | strategy: update')
             await self.ids_pool.save()
 
     def stop(self):
