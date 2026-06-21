@@ -28,7 +28,7 @@ class Crawler:
         self.ids_pool = Pool(config.pool_config)
         self.current_order_id = self.range_artist_id.min
         self.current_update_index = 0
-        self.max_update_index = self.repository.get_artists_count()
+        self.max_update_index = self.repository.get_to_update_artists_count(self.refresh_interval)
 
     async def run(self, strategy: Optional[Strategy] = None):
         if strategy is not None:
@@ -84,7 +84,7 @@ class Crawler:
 
                 current = self.current_update_index
                 self.current_update_index += 1
-                return self.repository.get_artist_at(index=current, sort_by="id").id
+                return self.repository.get_artist_to_update(index=current, delta_time=self.refresh_interval).id
 
         raise ValueError(f'Crawler: Unknown strategy: {self.strategy}')
 

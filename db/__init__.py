@@ -295,10 +295,44 @@ class Repository:
 
                 conn.commit()
 
-    def get_artist(
-            self,
-            artist_id: int,
-    ) -> Optional[ArtistRecord]:
+    def get_to_update_artists_count(self, delta_time: timedelta) -> int:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT COUNT(*) as count
+                    FROM artists
+                    WHERE date_recording < NOW() - %s
+                """, (delta_time,))
+
+                return cur.fetchone()["count"]
+
+    def get_artist_to_update(self, index: int, delta_time: timedelta) -> Optional[ArtistRecord]:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT
+                        a.*,
+                        array_remove(array_agg(DISTINCT g.name), NULL) AS genres,
+                        array_remove(array_agg(DISTINCT c.name), NULL) AS countries
+                    FROM artists a
+                    LEFT JOIN artist_genres ag ON a.id = ag.artist_id
+                    LEFT JOIN genres g ON ag.genre_id = g.id
+                    LEFT JOIN artist_countries ac ON a.id = ac.artist_id
+                    LEFT JOIN countries c ON ac.country_id = c.id
+                    WHERE a.date_recording < NOW() - %s
+                    GROUP BY a.id
+                    ORDER BY a.id
+                    LIMIT 1 OFFSET %s
+                """, (delta_time, index))
+
+                row = cur.fetchone()
+
+                if row is None:
+                    return None
+
+                return ArtistRecord.from_dict(row)
+
+    def get_artist(self, artist_id: int) -> Optional[ArtistRecord]:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
