@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import aiohttp
 
 from config import ApiClientConfig
@@ -18,6 +20,13 @@ def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
     _artist = result.get('artist')
     if not _artist:
         raise ValueError("Неверный ответ API: отсутствует artist")
+
+    cover_uri = None
+    _cover = _artist.get('cover')
+    if _cover:
+        cover_uri = _cover.get('uri')
+        if cover_uri:
+            cover_uri = cover_uri.replace('%%', '1000x1000')
 
     idx = _artist.get('id')
     name = _artist.get('name')
@@ -49,6 +58,7 @@ def _parse_artist(artist_data: dict[str, Any]) -> ArtistGetResult:
         artist=ArtistRecord(
             last_month_listeners=last_month_listeners,
             last_month_listeners_delta=last_month_listeners_delta,
+            cover_uri=cover_uri,
             id=idx,
             is_available=is_available,
             name=name,

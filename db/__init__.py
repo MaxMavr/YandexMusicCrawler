@@ -165,6 +165,8 @@ class Repository:
                         id INTEGER PRIMARY KEY,
                         name TEXT NOT NULL,
                         is_available BOOLEAN NOT NULL,
+                        
+                        cover_uri TEXT NULL,
 
                         last_month_listeners INTEGER NOT NULL,
                         last_month_listeners_delta INTEGER NOT NULL,
@@ -229,6 +231,7 @@ class Repository:
                         tracks_count,
                         likes_count,
                         ratings_month,
+                        cover_uri,
                         is_listened
                     )
                     VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s)
@@ -241,6 +244,7 @@ class Repository:
                     artist.tracks_count,
                     artist.likes_count,
                     artist.ratings_month,
+                    artist.cover_uri,
                     False,
                 ))
 
@@ -264,6 +268,7 @@ class Repository:
                         tracks_count = %s,
                         likes_count = %s,
                         ratings_month = %s,
+                        cover_uri = %s
                     WHERE id = %s
                 """, (
                     artist.last_month_listeners,
@@ -272,6 +277,7 @@ class Repository:
                     artist.tracks_count,
                     artist.likes_count,
                     artist.ratings_month,
+                    artist.cover_uri,
                     artist.id,
                 ))
 

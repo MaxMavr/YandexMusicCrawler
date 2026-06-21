@@ -1,10 +1,13 @@
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
 class ArtistRecord:
     last_month_listeners: int
     last_month_listeners_delta: int
+
+    cover_uri: Optional[str]
 
     id: int
     is_available: bool
@@ -20,10 +23,11 @@ class ArtistRecord:
 
     is_listened: bool = False
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             'last_month_listeners': self.last_month_listeners,
             'last_month_listeners_delta': self.last_month_listeners_delta,
+            'cover_uri': self.cover_uri,
             'id': self.id,
             'is_available': self.is_available,
             'name': self.name,
