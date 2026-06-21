@@ -94,7 +94,7 @@ class Crawler:
 
         age = self.repository.get_record_age(artist_id)
 
-        return age < timedelta(seconds=self.refresh_interval)
+        return age < self.refresh_interval
 
     def _save_artist(self, artist: ArtistRecord):
         if self.repository.artist_exists(artist.id):

@@ -1,5 +1,6 @@
 from collections import namedtuple
 from dataclasses import dataclass
+from datetime import timedelta
 from os import getenv
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
@@ -31,9 +32,9 @@ class CrawlerConfig:
     api_client_config: ApiClientConfig
     pool_config: PoolConfig
     rate_limiter: float = 3  # 3 запроса/сек
-    refresh_interval = 30 * 24 * 60 * 60  # 30 дней
+    refresh_interval: timedelta = timedelta(days=30)  # 30 * 24 * 60 * 60   30 дней
     range_artist_id = Range(min=1, max=20_000_000)
-    strategy = 'similar'  # 'order', 'update', 'similar', 'similar-random', 'random'
+    strategy = 'update'  # 'order', 'update', 'similar', 'similar-random', 'random'
 
 
 @dataclass
