@@ -39,6 +39,23 @@ class ArtistRecord:
             'is_listened': self.is_listened
         }
 
+    @classmethod
+    def from_dict(cls, dict_artist_record: dict) -> 'ArtistRecord':
+        return cls(
+            last_month_listeners=dict_artist_record["last_month_listeners"],
+            last_month_listeners_delta=dict_artist_record["last_month_listeners_delta"],
+            cover_uri=dict_artist_record["cover_uri"],
+            id=dict_artist_record["id"],
+            is_available=dict_artist_record["is_available"],
+            name=dict_artist_record["name"],
+            genres=dict_artist_record["genres"] or [],
+            countries=dict_artist_record["countries"] or [],
+            tracks_count=dict_artist_record["tracks_count"],
+            likes_count=dict_artist_record["likes_count"],
+            ratings_month=dict_artist_record["ratings_month"],
+            is_listened=dict_artist_record["is_listened"],
+        )
+
 
 @dataclass
 class ArtistsPage:

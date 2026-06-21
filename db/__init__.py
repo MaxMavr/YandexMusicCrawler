@@ -44,6 +44,23 @@ def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], cou
         """, (artist_id, unique_countries))
 
 
+FILTER_MAP = {
+    "is_available": ("a.is_available = %s", bool),
+    "is_listened": ("a.is_listened = %s", bool),
+    "name_contains": ("a.name ILIKE %s", str),
+    "min_listeners": ("a.last_month_listeners >= %s", int),
+    "max_listeners": ("a.last_month_listeners <= %s", int),
+    "min_listeners_delta": ("a.last_month_listeners_delta >= %s", int),
+    "max_listeners_delta": ("a.last_month_listeners_delta <= %s", int),
+    "min_likes": ("a.likes_count >= %s", int),
+    "max_likes": ("a.likes_count <= %s", int),
+    "min_tracks": ("a.tracks_count >= %s", int),
+    "max_tracks": ("a.tracks_count <= %s", int),
+    "min_ratings_month": ("a.ratings_month >= %s", int),
+    "max_ratings_month": ("a.ratings_month <= %s", int),
+}
+
+
 def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, list]:
     base_query = """
         FROM artists a
@@ -57,70 +74,11 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
     params = []
 
     if filters:
-        if "is_available" in filters:
-            if isinstance(filters["is_available"], bool):
-                where_conditions.append("a.is_available = %s")
-                params.append(filters["is_available"])
-
-        if "is_listened" in filters:
-            if isinstance(filters["is_listened"], bool):
-                where_conditions.append("a.is_listened = %s")
-                params.append(filters["is_listened"])
-
-        if "name_contains" in filters:
-            if isinstance(filters["name_contains"], str):
-                where_conditions.append("a.name ILIKE %s")
-                params.append(f"%{filters['name_contains']}%")
-
-        if "min_listeners" in filters:
-            if isinstance(filters["min_listeners"], int):
-                where_conditions.append("a.last_month_listeners >= %s")
-                params.append(filters["min_listeners"])
-
-        if "max_listeners" in filters:
-            if isinstance(filters["max_listeners"], int):
-                where_conditions.append("a.last_month_listeners <= %s")
-                params.append(filters["max_listeners"])
-
-        if "min_listeners_delta" in filters:
-            if isinstance(filters["min_listeners_delta"], int):
-                where_conditions.append("a.last_month_listeners_delta >= %s")
-                params.append(filters["min_listeners_delta"])
-
-        if "max_listeners_delta" in filters:
-            if isinstance(filters["max_listeners_delta"], int):
-                where_conditions.append("a.last_month_listeners_delta <= %s")
-                params.append(filters["max_listeners_delta"])
-
-        if "min_likes" in filters:
-            if isinstance(filters["min_likes"], int):
-                where_conditions.append("a.likes_count >= %s")
-                params.append(filters["min_likes"])
-
-        if "max_likes" in filters:
-            if isinstance(filters["max_likes"], int):
-                where_conditions.append("a.likes_count <= %s")
-                params.append(filters["max_likes"])
-
-        if "min_tracks" in filters:
-            if isinstance(filters["min_tracks"], int):
-                where_conditions.append("a.tracks_count >= %s")
-                params.append(filters["min_tracks"])
-
-        if "max_tracks" in filters:
-            if isinstance(filters["max_tracks"], int):
-                where_conditions.append("a.tracks_count <= %s")
-                params.append(filters["max_tracks"])
-
-        if "min_ratings_month" in filters:
-            if isinstance(filters["min_ratings_month"], int):
-                where_conditions.append("a.ratings_month >= %s")
-                params.append(filters["min_ratings_month"])
-
-        if "max_ratings_month" in filters:
-            if isinstance(filters["max_ratings_month"], int):
-                where_conditions.append("a.ratings_month <= %s")
-                params.append(filters["max_ratings_month"])
+        for key, (condition, expected_type) in FILTER_MAP.items():
+            value = filters.get(key)
+            if isinstance(value, expected_type):
+                where_conditions.append(condition)
+                params.append(value)
 
         if "genres" in filters:
             genres_list = filters["genres"]
@@ -149,8 +107,7 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
 
 
 class Repository:
-    def __init__(self,
-                 config: RepositoryConfig):
+    def __init__(self, config: RepositoryConfig):
         self._dsn = f"postgresql://{config.user}:{config.password}@{config.host}:{config.port}/{config.database}"
         self._create_tables()
 
@@ -212,12 +169,48 @@ class Repository:
                         PRIMARY KEY (artist_id, country_id)
                     );
                 """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_date_recording
+                    ON artists(date_recording);
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_name
+                    ON artists(name);
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_listeners
+                    ON artists(last_month_listeners);
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_likes
+                    ON artists(likes_count);
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_tracks
+                    ON artists(tracks_count);
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_ratings
+                    ON artists(ratings_month);
+                """)
+
+                cur.execute("""
+                    CREATE EXTENSION IF NOT EXISTS pg_trgm;
+                """)
+
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_artists_name_trgm
+                    ON artists USING gin (name gin_trgm_ops);
+                """)
             conn.commit()
 
-    def add_artist(
-            self,
-            artist: ArtistRecord,
-    ) -> None:
+    def add_artist(self, artist: ArtistRecord) -> None:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
@@ -234,7 +227,7 @@ class Repository:
                         cover_uri,
                         is_listened
                     )
-                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     artist.id,
                     artist.last_month_listeners,
@@ -252,16 +245,14 @@ class Repository:
 
                 conn.commit()
 
-    def update_artist(
-            self,
-            artist: ArtistRecord,
-    ) -> None:
+    def update_artist(self, artist: ArtistRecord) -> None:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
                     UPDATE artists
                     SET 
                         date_recording = NOW(),
+                        name = %s,
                         last_month_listeners = %s,
                         last_month_listeners_delta = %s,
                         is_available = %s,
@@ -271,6 +262,7 @@ class Repository:
                         cover_uri = %s
                     WHERE id = %s
                 """, (
+                    artist.name,
                     artist.last_month_listeners,
                     artist.last_month_listeners_delta,
                     artist.is_available,
@@ -336,55 +328,25 @@ class Repository:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT g.name
-                    FROM genres g
-                    JOIN artist_genres ag
-                        ON ag.genre_id = g.id
-                    WHERE ag.artist_id = %s
-                """, (artist_id,)
-                            )
-                genres = [row["name"] for row in cur.fetchall()]
-
-                cur.execute("""
-                    SELECT c.name
-                    FROM countries c
-                    JOIN artist_countries ac
-                        ON ac.country_id = c.id
-                    WHERE ac.artist_id = %s 
-                """, (artist_id,)
-                            )
-                countries = [row["name"] for row in cur.fetchall()]
-
-                cur.execute(
-                    "SELECT * FROM artists WHERE id = %s",
-                    (artist_id,)
-                )
+                    SELECT
+                        a.*,
+                        array_remove(array_agg(DISTINCT g.name), NULL) AS genres,
+                        array_remove(array_agg(DISTINCT c.name), NULL) AS countries
+                    FROM artists a
+                    LEFT JOIN artist_genres ag ON a.id = ag.artist_id
+                    LEFT JOIN genres g ON ag.genre_id = g.id
+                    LEFT JOIN artist_countries ac ON a.id = ac.artist_id
+                    LEFT JOIN countries c ON ac.country_id = c.id
+                    WHERE a.id = %s
+                    GROUP BY a.id
+                """, (artist_id,))
 
                 row = cur.fetchone()
 
                 if row is None:
                     return None
 
-                artist = ArtistRecord(
-                    last_month_listeners=row["last_month_listeners"],
-                    last_month_listeners_delta=row["last_month_listeners_delta"],
-
-                    id=row["id"],
-                    is_available=row["is_available"],
-                    name=row["name"],
-
-                    genres=genres,
-                    countries=countries,
-
-                    tracks_count=row["tracks_count"],
-                    likes_count=row["likes_count"],
-
-                    ratings_month=row["ratings_month"],
-
-                    is_listened=row["is_listened"],
-                )
-
-                return artist
+                return ArtistRecord.from_dict(row)
 
     def artist_exists(self, artist_id: int) -> bool:
         with self._connect() as conn:
@@ -452,7 +414,7 @@ class Repository:
             sort_by: str = "name",
             sort_order: str = "ASC",
             filters: Optional[dict] = None
-    ) -> ArtistRecord:
+    ) -> Optional[ArtistRecord]:
 
         sort_order = sort_order.upper()
         sort_order = "ASC" if sort_order not in ["ASC", "DESC"] else sort_order
@@ -481,19 +443,10 @@ class Repository:
                 cur.execute(paginated_query, pagination_params)
                 row = cur.fetchone()
 
-                return ArtistRecord(
-                            id=row["id"],
-                            name=row["name"],
-                            is_available=row["is_available"],
-                            last_month_listeners=row["last_month_listeners"],
-                            last_month_listeners_delta=row["last_month_listeners_delta"],
-                            tracks_count=row["tracks_count"],
-                            likes_count=row["likes_count"],
-                            ratings_month=row["ratings_month"],
-                            is_listened=row["is_listened"],
-                            genres=row["genres"] or [],
-                            countries=row["countries"] or [],
-                        )
+                if row is None:
+                    return None
+
+                return ArtistRecord.from_dict(row)
 
     def get_artists_page(
             self,
@@ -546,21 +499,7 @@ class Repository:
                 rows = cur.fetchall()
 
                 return ArtistsPage(
-                    artist_records=[
-                        ArtistRecord(
-                            id=row["id"],
-                            name=row["name"],
-                            is_available=row["is_available"],
-                            last_month_listeners=row["last_month_listeners"],
-                            last_month_listeners_delta=row["last_month_listeners_delta"],
-                            tracks_count=row["tracks_count"],
-                            likes_count=row["likes_count"],
-                            ratings_month=row["ratings_month"],
-                            is_listened=row["is_listened"],
-                            genres=row["genres"] or [],
-                            countries=row["countries"] or [],
-                        ) for row in rows
-                    ],
+                    artist_records=[ArtistRecord.from_dict(row) for row in rows],
                     total=total,
                     page=page,
                     page_size=page_size,
