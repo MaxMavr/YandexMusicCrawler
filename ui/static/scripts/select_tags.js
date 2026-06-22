@@ -17,10 +17,11 @@ const FILTER_CONFIG = {
     }
 };
 
-import { queryParams, updateQueryParams } from './state.js';
+import { queryParams, resetPagination } from './state.js';
 import { loadArtistPage } from './loading.js';
 import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
-import { initInfoLabelButtons } from './info.js';
+import { setupInfoLabelButton, initInfoLabelButtons } from './info.js';
+
 
 function initTagsButtons() {
     document
@@ -130,7 +131,7 @@ function handleTagClick(event, selected) {
 }
 
 function updateTagFilter() {
-    updateQueryParams({page: 1, has_more: true,});
+    resetPagination();
     renderSelectedTags();
     loadArtistPage(true);
 }
@@ -152,8 +153,7 @@ function renderSelectedTags() {
         config.selected.forEach(tagCode => {
             const tag = config.make(tagCode);
             tag.classList.add('selected');
-            tag.classList.add('info-label-button');
-            tag.dataset.text = config.info_label_delete;
+            setupInfoLabelButton(tag, config.info_label_delete)
 
             tag.addEventListener('click', (e) => {
                 handleTagClick(e, config.selected)

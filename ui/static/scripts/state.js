@@ -30,6 +30,10 @@ export function updateQueryParams(newParams) {
     queryParams = { ...queryParams, ...newParams };
 }
 
+export function resetPagination() {
+    updateQueryParams({page: 1, has_more: true});
+}
+
 export function updateQueryFilterParams(filterName, value) {
     queryParams = {
         ...queryParams,

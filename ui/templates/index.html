@@ -13,8 +13,6 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/input.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/tags.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/overlay.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/message.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/icon.css') }}" />
   </head>
 
   <body>
@@ -22,8 +20,8 @@
       <header>
         <div class="header-container">
           <div class="headline">
-            <span class="subtitle">Таблица</span>
-            <h1 class="title">Артистов</h1>
+            <span>Таблица</span>
+            <h1>Артистов</h1>
           </div>
           
           <button class="button info-label-button" data-text="Обновить" id="refresh-button">
@@ -37,7 +35,7 @@
             <div class="table-title-container">
               <div class="name-container">
                 <div class="button-container">
-                  <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по названию" data-sort-by="name" data-sort-order="ASC">
+                  <button class="button ghost-button sorting-button info-label-button" data-text="Отсортировать по названию" data-sort-by="name" data-sort-order="ASC">
                     <span>Исполнитель</span>
                     {% include 'icons/sorting.svg' %}
                   </button>
@@ -51,7 +49,7 @@
           <div class="tracks-title">
             <div class="table-title-container">
               <div class="button-container">
-                <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
+                <button class="button ghost-button sorting-button info-label-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
                   <span>Треки</span>
                   {% include 'icons/sorting.svg' %}
                 </button>
@@ -65,7 +63,7 @@
           <div class="likes-title">
             <div class="table-title-container">
               <div class="button-container">
-                <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по лайкам" data-sort-by="likes_count" data-sort-order="ASC">
+                <button class="button ghost-button sorting-button info-label-button" data-text="Отсортировать по лайкам" data-sort-by="likes_count" data-sort-order="ASC">
                   <span>Лайки</span>
                   {% include 'icons/sorting.svg' %}
                 </button>
@@ -79,7 +77,7 @@
           <div class="listeners-title">
             <div class="table-title-container">
               <div class="button-container">
-                <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
+                <button class="button ghost-button sorting-button info-label-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
                   <span>Слушатели</span>
                   {% include 'icons/sorting.svg' %}
                 </button>
@@ -93,7 +91,7 @@
           <div class="rating-month-title">
             <div class="table-title-container">
               <div class="button-container">
-                <button class="button clean-button sorting-button info-label-button" data-text="Отсортировать по рейтингу" data-sort-by="ratings_month" data-sort-order="ASC">
+                <button class="button ghost-button sorting-button info-label-button" data-text="Отсортировать по рейтингу" data-sort-by="ratings_month" data-sort-order="ASC">
                   <span>Рейтинг</span>
                   {% include 'icons/sorting.svg' %}
                 </button>
@@ -109,7 +107,7 @@
               <span>Жанры</span>
               <div class="tags-container">
                 <div class="tags-container" id="genres-tags-container"></div>
-                <button class="button clean-button tags-button info-label-button" data-text="Изменить жанры сортировки" data-type="genres">
+                <button class="button ghost-button tags-button info-label-button" data-text="Изменить жанры сортировки" data-type="genres">
                   {% include 'icons/plus_square.svg' %}
                 </button>
               </div>
@@ -121,7 +119,7 @@
               <span>Страны</span>
               <div class="tags-container">
                 <div class="tags-container" id="countries-tags-container"></div>
-                <button class="button clean-button tags-button info-label-button" data-text="Изменить страны сортировки" data-type="countries">
+                <button class="button ghost-button tags-button info-label-button" data-text="Изменить страны сортировки" data-type="countries">
                   {% include 'icons/plus_square.svg' %}
                 </button>
               </div>
@@ -180,7 +178,7 @@
 
           <div class="tracks-cell info-label-button" data-text="Количество треков"></div>
           <div class="likes-cell info-label-button" data-text="Количество лайков"></div>
-          <div class="listeners-cell info-label-button" data-text="Количество слушателей">
+          <div class="listeners-cell info-label-button" data-text="Количество слушателей за месяц">
             <span class="listeners"></span>
             <span class="listeners-delta"></span>
           </div>

@@ -29,7 +29,6 @@ function getGenreClass(genreCode) {
     return found?.class || '';
 }
 
-
 function getGenreDisplayName(genreCode) {
     genreCode = genreCode.toLowerCase();
     

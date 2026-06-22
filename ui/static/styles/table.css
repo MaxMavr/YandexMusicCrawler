@@ -25,7 +25,6 @@
 }
 
 #table-body {
-    color: var(--ym-controls-color-primary-text-enabled);
     padding: var(--ym-spacer-size-xxl);
 }
 
@@ -51,7 +50,6 @@
     width: 40px;
     height: 40px;
     background-color: var(--ym-controls-color-secondary-default-disabled);
-    color: var(--ym-controls-color-primary-text-enabled);
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -102,6 +100,9 @@
     display: flex;
     z-index: 10;
     justify-content: space-between;
+}
+.listeners-delta {
+    font-weight: normal;
 }
 
 .listeners-delta.rise {

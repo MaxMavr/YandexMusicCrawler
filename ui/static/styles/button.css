@@ -1,66 +1,64 @@
 .button-container {
   display: flex;
-  gap: var(--ym-spacer-size-xxxs);
   flex-wrap: wrap;
+  gap: var(--ym-spacer-size-xxxs);
 }
 
 .button {
   display: flex;
-  gap: var(--ym-spacer-size-xxxs);
   align-items: center;
+  gap: var(--ym-spacer-size-xxs);
+  padding: var(--ym-spacer-size-xl) var(--ym-spacer-size-s);
 
-  border-radius: var(--ym-radius-size-xxxl);
-  padding: var(--padding-item);
-  transition: var(--transition);
-  font-weight: bold;
-
-  user-select: none;
+  font-weight: var(--ym-font-weight-bold);
+  color: var(--ym-color-black);
   white-space: nowrap;
   text-decoration: none;
+  
+  background-color: var(--ym-color-primary);
+  border-radius: var(--ym-radius-size-xxxl);
   cursor: pointer;
-
-  color: var(--ym-controls-color-primary-on_default-enabled);
-  background-color: var(--ym-controls-color-primary-default-enabled);
-}
-
-
-.button.clean-button {
-  padding: 0;
-  font-weight: normal;
-  background-color: transparent;
-  color: var(--ym-controls-color-primary-text-enabled_variant);
-}
-
-.button.clean-button:hover:not(:active) {
-  background-color: transparent;
-}
-
-.button.clean-button:active {
-  background-color: transparent;
+  transition: var(--transition);
+  user-select: none;
 }
 
 .button:hover:not(:active) {
-  background-color: var(--ym-controls-color-primary-default-hovered);
+  background-color: var(--ym-color-primary-hover);
 }
 
 .button:active {
-  transition: all 0.1s cubic-bezier(0.75, 0.35, 0.4, 0.99);
-  background-color: var(--ym-controls-color-primary-default-enabled);
+  transition: var(--transition-fast);
+  background-color: var(--ym-color-primary);
 }
 
+
+.button.ghost-button {
+  padding: 0;
+  font-weight: normal;
+  background-color: transparent;
+}
+
+.button.ghost-button:hover,
+.button.ghost-button:active {
+  background-color: transparent;
+}
+
+
 .button-icon {
-  transition: all 0.3s cubic-bezier(0.75, 0.35, 0.4, 0.99);
   padding: var(--padding-icon);
   height: 100%;
 
-  user-select: none;
-  white-space: nowrap;
   text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
-
-  color: var(--ym-controls-color-primary-text-enabled_variant);
+  user-select: none;
 }
 
-.button-icon.refresh:active {
-  transform: rotate(180deg);
+.icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  aspect-ratio: 1;
+  vertical-align: middle;
+  pointer-events: none;
 }

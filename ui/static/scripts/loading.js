@@ -1,7 +1,8 @@
-const ROW_TEMPLATE = document.getElementById('row-template');
 import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
-import { initInfoLabelButtons } from './info.js';
+import { setupInfoLabelButton, initInfoLabelButtons } from './info.js';
 import { handleTagMenuClick } from './select_tags.js';
+
+const ROW_TEMPLATE = document.getElementById('row-template');
 const CASCADE_DELAY = 0.05;
 const DEFAULT_ARTIST_COVER_TEMPLATE = document.getElementById('default-artist-cover-template');
 
@@ -10,13 +11,8 @@ const formatNumber = value => value.toLocaleString('ru-RU');
 function makeLoadingRow(index) {
     const row = ROW_TEMPLATE.content.cloneNode(true);
     const rowElement = row.querySelector('.table-row');
-
     rowElement.classList.add('loading');
-    rowElement.style.setProperty(
-        '--cascade-delay',
-        `${index * CASCADE_DELAY}s`
-    );
-
+    rowElement.style.setProperty('--cascade-delay', `${index * CASCADE_DELAY}s`);
     return rowElement;
 }
 
@@ -73,11 +69,11 @@ function makeArtistRow(artist, index) {
                 'genres'
             );
         });
-        tag.classList.add('info-label-button');
+
         if (queryParams.filters.genres.includes(tagCode)) {
-            tag.dataset.text = 'Убрать жанр из сортировки';
+            setupInfoLabelButton(tag, 'Убрать жанр из сортировки');
         } else {
-            tag.dataset.text = 'Добавить жанр в сортировку';
+            setupInfoLabelButton(tag, 'Добавить жанр в сортировку');
         }
         genresTagsContainer.appendChild(tag);
     });
@@ -93,12 +89,11 @@ function makeArtistRow(artist, index) {
                 'countries'
             );
         });
-        tag.classList.add('info-label-button');
 
         if (queryParams.filters.countries.includes(tagCode)) {
-            tag.dataset.text = 'Убрать страну из сортировки';
+            setupInfoLabelButton(tag, 'Убрать страну из сортировку');
         } else {
-            tag.dataset.text = 'Добавить страну в сортировку';
+            setupInfoLabelButton(tag, 'Добавить страну в сортировку');
         }
 
         countryTagsContainer.appendChild(tag);

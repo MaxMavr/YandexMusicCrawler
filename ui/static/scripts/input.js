@@ -1,5 +1,6 @@
-import { updateQueryParams, updateQueryFilterParams, queryParams } from './state.js';
+import { updateQueryParams, updateQueryFilterParams, queryParams, resetPagination } from './state.js';
 import { loadArtistPage } from './loading.js';
+
 
 function initInput() { 
     const inputs = document.querySelectorAll('.input'); 
@@ -42,7 +43,7 @@ function handleInput(event) {
 }
 
 function updateInputFilter(fieldName, value) {
-    updateQueryParams({page: 1, has_more: true,});
+    resetPagination();
     updateQueryFilterParams(fieldName, value);
     loadArtistPage(true);
 }
@@ -80,12 +81,11 @@ function handleSortClick(event) {
     updateButtonIcon(button);
 
     updateQueryParams({
-        page: 1,
-        has_more: true,
         sortBy: button.dataset.sortBy,
         sortOrder: button.dataset.sortOrder,
     });
 
+    resetPagination();
     loadArtistPage(true);
 }
 
@@ -104,16 +104,12 @@ function initRefreshButtons() {
     const anim = button.querySelector('.refresh-animation');
     
     button.addEventListener('click', () => {
-        updateQueryParams({
-            page: 1,
-            has_more: true,
-        });
-
+        resetPagination();
         anim.beginElement();
-
         loadArtistPage(true);
     });
 }
+
 
 initRefreshButtons();
 initSortingButtons();

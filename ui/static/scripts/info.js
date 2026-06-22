@@ -13,14 +13,10 @@ document.addEventListener('mousemove', function(event) {
 });
 
 
-export function makeInfoLabelButton(element, text) {
+export function setupInfoLabelButton(element, text) {
     element.classList.add('info-label-button');
     if (text !== undefined && text !== null) {
         element.dataset.text = text;
-    }
-
-    if (typeof initInfoLabelButton === 'function') {
-        initInfoLabelButton(element);
     }
 
     return element;

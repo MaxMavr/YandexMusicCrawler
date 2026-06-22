@@ -7,18 +7,17 @@
 
 .tag {
   --color-tag: var(--ym-controls-color-primary-text-enabled);
-  --gradient-tag: to right;
-
-  position: relative;
-  border-radius: var(--border-radius);
-  padding: var(--padding-tag);
   color: var(--color-tag);
+  
+  position: relative;
+
+  border-radius: var(--ym-radius-size-xs);
+  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
+  transition: var(--transition);
 
   user-select: none;
   cursor: pointer;
   white-space: nowrap;
-
-  transition: var(--transition);
 }
 
 .tag.rap {

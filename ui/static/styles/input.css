@@ -11,7 +11,7 @@ input[type="number"] {
 
 .input {
   display: block;
-  padding: var(--padding-input);
+  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
   border-radius: var(--ym-radius-size-xl);
   width: 100%;
   font-size: var(--ym-font-size-label-m);
@@ -49,34 +49,4 @@ input[type="number"] {
 .input::-ms-input-placeholder {
   color: var(--ym-controls-color-secondary-outline-enabled_stroke);
   opacity: 1;
-}
-
-
-input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  width: 20px;
-  height: 20px;
-  margin: 0;
-  
-  accent-color: #4CAF50;
-  cursor: pointer;
-  
-  border: var(--border) var(--border-color);
-  border-radius: var(--border-radius);
-  outline: none;
-  
-  flex-shrink: 0;
-}
-
-
-input[type="checkbox"]:checked {
-  background: #4CAF50;
-  /* border-color: #4CAF50; */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 14px;
 }
