@@ -126,18 +126,18 @@ class Repository:
                         id INTEGER PRIMARY KEY,
                         name TEXT NOT NULL,
                         is_available BOOLEAN NOT NULL,
-                        
+
                         cover_uri TEXT NULL,
 
                         last_month_listeners INTEGER NOT NULL,
                         last_month_listeners_delta INTEGER NOT NULL,
-                        
+
                         tracks_count INTEGER NOT NULL,
                         likes_count INTEGER NOT NULL,
                         ratings_month INTEGER NOT NULL,
-                        
+
                         date_recording TIMESTAMP NOT NULL,
-                        
+
                         is_listened BOOLEAN NOT NULL
                     )
                 """)
@@ -160,7 +160,7 @@ class Repository:
                     CREATE TABLE IF NOT EXISTS artist_genres (
                         artist_id INTEGER REFERENCES artists(id) ON DELETE CASCADE,
                         genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
-                    
+
                         PRIMARY KEY (artist_id, genre_id)
                     );
                 """)
@@ -169,7 +169,7 @@ class Repository:
                     CREATE TABLE IF NOT EXISTS artist_countries (
                         artist_id INTEGER REFERENCES artists(id) ON DELETE CASCADE,
                         country_id INTEGER REFERENCES countries(id) ON DELETE CASCADE,
-                    
+
                         PRIMARY KEY (artist_id, country_id)
                     );
                 """)
@@ -214,7 +214,7 @@ class Repository:
                 """)
             conn.commit()
 
-    def add_artist(self, artist: ArtistRecord) -> None:
+    def upsert_artist(self, artist: ArtistRecord) -> None:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
@@ -232,6 +232,16 @@ class Repository:
                         is_listened
                     )
                     VALUES (%s, NOW(), %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON CONFLICT (id) DO UPDATE SET
+                        date_recording = NOW(),
+                        last_month_listeners = EXCLUDED.last_month_listeners,
+                        last_month_listeners_delta = EXCLUDED.last_month_listeners_delta,
+                        is_available = EXCLUDED.is_available,
+                        name = EXCLUDED.name,
+                        tracks_count = EXCLUDED.tracks_count,
+                        likes_count = EXCLUDED.likes_count,
+                        ratings_month = EXCLUDED.ratings_month,
+                        cover_uri = EXCLUDED.cover_uri
                 """, (
                     artist.id,
                     artist.last_month_listeners,
@@ -245,47 +255,8 @@ class Repository:
                     False,
                 ))
 
-                _update_artist_relations(cur, artist.id, artist.genres, artist.countries)
-
-                conn.commit()
-
-    def update_artist(self, artist: ArtistRecord) -> None:
-        with self._connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("""
-                    UPDATE artists
-                    SET 
-                        date_recording = NOW(),
-                        name = %s,
-                        last_month_listeners = %s,
-                        last_month_listeners_delta = %s,
-                        is_available = %s,
-                        tracks_count = %s,
-                        likes_count = %s,
-                        ratings_month = %s,
-                        cover_uri = %s
-                    WHERE id = %s
-                """, (
-                    artist.name,
-                    artist.last_month_listeners,
-                    artist.last_month_listeners_delta,
-                    artist.is_available,
-                    artist.tracks_count,
-                    artist.likes_count,
-                    artist.ratings_month,
-                    artist.cover_uri,
-                    artist.id,
-                ))
-
-                cur.execute("""
-                    DELETE FROM artist_genres
-                    WHERE artist_id = %s
-                """, (artist.id,))
-
-                cur.execute("""
-                    DELETE FROM artist_countries
-                    WHERE artist_id = %s
-                """, (artist.id,))
+                cur.execute("DELETE FROM artist_genres WHERE artist_id = %s", (artist.id,))
+                cur.execute("DELETE FROM artist_countries WHERE artist_id = %s", (artist.id,))
 
                 _update_artist_relations(cur, artist.id, artist.genres, artist.countries)
 
@@ -302,31 +273,18 @@ class Repository:
 
                 return cur.fetchone()["count"]
 
-    def get_artist_to_update(self, index: int, delta_time: timedelta) -> Optional[ArtistRecord]:
+    def get_stale_artist_ids(self, delta_time: timedelta, limit: int) -> list[int]:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT
-                        a.*,
-                        array_remove(array_agg(DISTINCT g.name), NULL) AS genres,
-                        array_remove(array_agg(DISTINCT c.name), NULL) AS countries
-                    FROM artists a
-                    LEFT JOIN artist_genres ag ON a.id = ag.artist_id
-                    LEFT JOIN genres g ON ag.genre_id = g.id
-                    LEFT JOIN artist_countries ac ON a.id = ac.artist_id
-                    LEFT JOIN countries c ON ac.country_id = c.id
-                    WHERE a.date_recording < NOW() - %s
-                    GROUP BY a.id
-                    ORDER BY a.id
-                    LIMIT 1 OFFSET %s
-                """, (delta_time, index))
+                    SELECT id
+                    FROM artists
+                    WHERE date_recording < NOW() - %s
+                    ORDER BY date_recording ASC
+                    LIMIT %s
+                """, (delta_time, limit))
 
-                row = cur.fetchone()
-
-                if row is None:
-                    return None
-
-                return ArtistRecord.from_dict(row)
+                return [row["id"] for row in cur.fetchall()]
 
     def get_artist(self, artist_id: int) -> Optional[ArtistRecord]:
         with self._connect() as conn:

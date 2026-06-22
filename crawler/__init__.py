@@ -4,7 +4,7 @@ from typing import Literal, Optional
 
 from config import CrawlerConfig
 from crawler.api import ApiClient
-from db import Repository, ArtistRecord
+from db import Repository
 from crawler.utils.pool import Pool
 from crawler.utils.rate_limiter import RateLimiter
 
@@ -26,8 +26,11 @@ class Crawler:
 
         self.ids_pool = Pool(config.pool_config)
         self.current_order_id = self.range_artist_id.min
-        self.current_update_index = 0
-        self.max_update_index = self.repository.get_to_update_artists_count(self.refresh_interval)
+
+        self.debug_flag = config.debug_flag
+        self.update_batch_size = config.update_batch_size
+        self._update_batch: list[int] = []
+        self.updated_count = 0
 
     async def run(self, strategy: Optional[Strategy] = None):
         if strategy is not None:
@@ -38,25 +41,29 @@ class Crawler:
                 current_id = await self._next_id()
 
                 if current_id is None:
-                    print('Crawler: Finished round')
-                    break
+                    if self.debug_flag:
+                        print('Crawler: Finished round')
+                        break
+                    continue
 
                 try:
                     await self._process_artist(current_id)
                 except Exception as e:
                     print(f'Crawler: Failed to process {current_id}: {e}')
 
-                print(f'Crawler: id {current_id:<10}', end='')
+                if self.debug_flag:
+                    print(f'Crawler: id {current_id:<10}', end='')
 
-                match self.strategy:
-                    case 'order':
-                        print(f'| max id: {self.range_artist_id.max} | strategy: order')
-                    case 'similar':
-                        print(f'| pool: {len(self.ids_pool):<10} | strategy: similar')
-                    case 'similar-random':
-                        print(f'| pool: {len(self.ids_pool):<10} | strategy: similar-random')
-                    case 'update':
-                        print(f'| index: {self.current_update_index:>10} / {self.max_update_index:<10} | strategy: update')
+                    match self.strategy:
+                        case 'order':
+                            print(f'| max id: {self.range_artist_id.max} | strategy: order')
+                        case 'similar':
+                            print(f'| pool: {len(self.ids_pool):<10} | strategy: similar')
+                        case 'similar-random':
+                            print(f'| pool: {len(self.ids_pool):<10} | strategy: similar-random')
+                        case 'update':
+                            print(
+                                f'| updated: {self.updated_count:>10} | batch left: {len(self._update_batch):<6} | strategy: update')
             await self.ids_pool.save()
 
     def stop(self):
@@ -89,12 +96,16 @@ class Crawler:
                 return self._get_random_id()
 
             case 'update':
-                if self.current_update_index >= self.max_update_index:
-                    return None
+                if not self._update_batch:
+                    self._update_batch = self.repository.get_stale_artist_ids(
+                        delta_time=self.refresh_interval,
+                        limit=self.update_batch_size,
+                    )
 
-                current = self.current_update_index
-                self.current_update_index += 1
-                return self.repository.get_artist_to_update(index=current, delta_time=self.refresh_interval).id
+                    if not self._update_batch:
+                        return None
+
+                return self._update_batch.pop(0)
 
         raise ValueError(f'Crawler: Unknown strategy: {self.strategy}')
 
@@ -106,19 +117,14 @@ class Crawler:
 
         return age < self.refresh_interval
 
-    def _save_artist(self, artist: ArtistRecord):
-        if self.repository.artist_exists(artist.id):
-            self.repository.update_artist(artist)
-        else:
-            self.repository.add_artist(artist)
-
     async def _process_artist(self, artist_id: int):
-        if self._is_actual_artist(artist_id):
+        if self.strategy != 'update' and self._is_actual_artist(artist_id):
             return
 
         await self.rate_limiter.wait()
         result = await self.api_client.get(artist_id)
-        self._save_artist(result.artist)
+        self.repository.upsert_artist(result.artist)
+        self.updated_count += 1
 
         if self.strategy in ('similar', 'similar-random'):
             await self.ids_pool.update(result.similar_artist_ids)

@@ -20,7 +20,7 @@ class ApiClientConfig:
 
 @dataclass
 class PoolConfig:
-    file: Path = TEMP_PATH / "queue.json",
+    file: Path = TEMP_PATH / "queue.json"
     save_frequency: int = 1000  # сохраняем каждый 1000 шагов
 
 
@@ -34,13 +34,15 @@ class CrawlerConfig:
     rate_limiter: float = 3  # 3 запроса/сек
     refresh_interval: timedelta = timedelta(days=30)  # 30 * 24 * 60 * 60   30 дней
     range_artist_id = Range(min=1, max=20_000_000)
+    debug_flag: bool = True
+    update_batch_size: int = 500
     strategy = 'update'  # 'order', 'update', 'similar', 'similar-random', 'random'
 
 
 @dataclass
 class RepositoryConfig:
-    database: str = "music",
-    password: str = getenv("POSTGRESQL_PASSWORD"),
+    database: str = "music"
+    password: str = getenv("POSTGRESQL_PASSWORD")
     user: str = "postgres"
     host: str = "localhost"
     port: int = 5432
