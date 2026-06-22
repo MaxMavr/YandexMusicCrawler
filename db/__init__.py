@@ -47,7 +47,6 @@ def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], cou
 FILTER_MAP = {
     "is_available": ("a.is_available = %s", bool),
     "is_listened": ("a.is_listened = %s", bool),
-    "name_contains": ("a.name ILIKE %s", str),
     "min_listeners": ("a.last_month_listeners >= %s", int),
     "max_listeners": ("a.last_month_listeners <= %s", int),
     "min_listeners_delta": ("a.last_month_listeners_delta >= %s", int),
@@ -79,6 +78,11 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
             if isinstance(value, expected_type):
                 where_conditions.append(condition)
                 params.append(value)
+
+        if "name_contains" in filters:
+            if isinstance(filters["name_contains"], str):
+                where_conditions.append("a.name ILIKE %s")
+                params.append(f"%{filters['name_contains']}%")
 
         if "genres" in filters:
             genres_list = filters["genres"]
@@ -470,13 +474,13 @@ class Repository:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 count_query = f"""
-                    SELECT COUNT(DISTINCT a.id) AS total
+                    SELECT COUNT(DISTINCT a.id)
                     {base_query}
                     {where_clause}
                 """
 
                 cur.execute(count_query, params)
-                total = cur.fetchone()["total"]
+                total = cur.fetchone()["count"]
 
                 total_pages = (total + page_size - 1) // page_size if total else 0
                 offset = (page - 1) * page_size
