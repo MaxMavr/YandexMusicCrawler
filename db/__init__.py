@@ -90,7 +90,14 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
             if (isinstance(genres_list, list)
                     and genres_list
                     and all(isinstance(g, str) for g in genres_list)):
-                where_conditions.append("g.name = ANY(%s)")
+                where_conditions.append("""
+                    EXISTS (
+                        SELECT 1
+                        FROM artist_genres ag2
+                        JOIN genres g2 ON ag2.genre_id = g2.id
+                        WHERE ag2.artist_id = a.id AND g2.name = ANY(%s)
+                    )
+                """)
                 params.append(genres_list)
 
         if "countries" in filters:
@@ -99,7 +106,14 @@ def _build_artists_filters(filters: Optional[dict] = None) -> tuple[str, str, li
             if (isinstance(countries_list, list)
                     and countries_list
                     and all(isinstance(c, str) for c in countries_list)):
-                where_conditions.append("c.name = ANY(%s)")
+                where_conditions.append("""
+                    EXISTS (
+                        SELECT 1
+                        FROM artist_countries ac2
+                        JOIN countries c2 ON ac2.country_id = c2.id
+                        WHERE ac2.artist_id = a.id AND c2.name = ANY(%s)
+                    )
+                """)
                 params.append(countries_list)
 
     where_clause = ""
