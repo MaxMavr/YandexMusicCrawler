@@ -1,0 +1,52 @@
+  
+:root {
+  --ym-font-heading: "YSMusic Headline", Roboto, Arial, sans-serif;
+  --ym-font-text: "YS Text", Roboto, Arial, sans-serif;
+
+  --ym-radius-size-xl: 1rem;
+  --ym-outline-color-primary-disabled: hsla(0, 0%, 100%, .04);
+  --ym-background-color-primary-enabled-content: #121212;
+  --ym-radius-size-xxxl: 6.25rem;
+
+  --average-color-background: rgba(30, 30, 30, 0.7);
+  --ym-background-color-secondary-enabled-blur: #3d3d3d;
+
+  --ym-controls-color-secondary-outline-hovered_stroke: grey;
+  --ym-controls-color-secondary-outline-selected_stroke: #e6e6e6;
+  --ym-controls-color-secondary-default-enabled: hsla(0, 0%, 100%, .08);
+
+  --ym-font-size-headline-xs: 1.25rem;
+  --ym-font-size-label-m: 0.875rem;
+  
+  --ym-spacer-size-m: 0.75rem;
+  --ym-spacer-size-xl: 1.25rem;
+  --ym-spacer-size-xxl: 1.5rem;
+  --ym-spacer-size-xxxs: 0.25rem;
+  --ym-spacer-size-xxxl: 2rem;
+
+  --ym-font-size-headline-xl: 2rem;
+
+  --ym-spacer-size-xs: 0.5rem;
+  --ym-radius-size-s: 0.375rem;
+  --ym-font-weight-medium: 500;
+
+  --ym-duration-transition: 0.3s;
+  --ym-surface-color-primary-enabled-list: hsla(0, 0%, 100%, .08);
+  --ym-controls-color-secondary-outline-enabled_stroke: #4d4d4d;
+  --ym-background-color-primary-enabled-basic: #000;
+  --ym-controls-color-primary-text-enabled: hsla(0, 0%, 100%, .5);
+  --ym-controls-color-primary-text-enabled_variant: #e6e6e6;
+  --ym-controls-color-primary-on_default-enabled: #000;
+  --ym-controls-color-primary-default-enabled: #7CEE00; /*#ff0;*/
+  --ym-controls-color-primary-default-hovered: #61B500; /*#dada0b;*/
+  --ym-controls-color-secondary-on_outline-enabled: #e6e6e6;
+  --ym-controls-color-secondary-outline-enabled_stroke: #4d4d4d;
+  --ym-background-color-primary-enabled-popover: #1a1a1a;
+
+  --ym-controls-color-secondary-default-disabled: hsla(0, 0%, 100%, .08);
+  --ym-background-color-primary-enabled-shimmer: linear-gradient(90deg, rgba(41, 41, 41, .5) 40%, rgba(94, 94, 94, .3) 50%, rgba(41, 41, 41, .5) 60%);
+
+  --ym-layout-border: 0.0625rem solid var(--ym-outline-color-primary-disabled);
+  --ym-layout-border-radius: var(--ym-radius-size-xl);
+  --ym-layout-background-color: var(--ym-background-color-primary-enabled-content);
+}

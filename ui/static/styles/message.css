@@ -1,0 +1,16 @@
+.message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: var(--ym-spacer-size-xxxl);
+}
+
+.message h3 {
+    font-size: var(--ym-font-size-headline-xs);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    margin-block-end: var(--ym-spacer-size-xs);
+}
+
+.message span {
+    font-weight: normal;
+}
