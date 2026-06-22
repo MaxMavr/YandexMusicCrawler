@@ -12,16 +12,16 @@ load_dotenv(find_dotenv())
 
 @dataclass
 class ApiClientConfig:
-    token: str
+    token: str = getenv("YANDEX_TOKEN")
     language: str = "ru"
     timeout: int = 15
-    base_url = 'https://api.music.yandex.net'
+    base_url: str = 'https://api.music.yandex.net'
 
 
 @dataclass
 class PoolConfig:
-    file: Path
-    save_frequency: int = 10_000  # сохраняем каждый 10 000 шагов
+    file: Path = TEMP_PATH / "queue.json",
+    save_frequency: int = 1000  # сохраняем каждый 1000 шагов
 
 
 Range = namedtuple('Range', ['min', 'max'])
@@ -39,29 +39,18 @@ class CrawlerConfig:
 
 @dataclass
 class RepositoryConfig:
-    database: str
-    password: str
+    database: str = "music",
+    password: str = getenv("POSTGRESQL_PASSWORD"),
     user: str = "postgres"
     host: str = "localhost"
     port: int = 5432
 
 
-API_CLIENT_CONFIG = ApiClientConfig(
-    token=getenv("YANDEX_TOKEN"),
-)
-
-POOL_CONFIG = PoolConfig(
-    file=TEMP_PATH / "queue.json",
-)
-
 CRAWLER_CONFIG = CrawlerConfig(
-    api_client_config=API_CLIENT_CONFIG,
-    pool_config=POOL_CONFIG,
+    api_client_config=ApiClientConfig(),
+    pool_config=PoolConfig()
 )
 
-REPOSITORY_CONFIG = RepositoryConfig(
-    database="music",
-    password=getenv("POSTGRESQL_PASSWORD"),
-)
+REPOSITORY_CONFIG = RepositoryConfig()
 
 TEMP_PATH.mkdir(parents=True, exist_ok=True)
