@@ -1,47 +1,70 @@
 .tags-container {
   display: flex;
-  gap: var(--gap-item);
+  gap: var(--ym-spacer-size-xxxs);
   align-items: center;
-  z-index: 10;
   flex-wrap: wrap;
 }
 
 .tag {
+  --color-tag: var(--ym-controls-color-primary-text-enabled);
+  --gradient-tag: to right;
+
+  position: relative;
   border-radius: var(--border-radius);
   padding: var(--padding-tag);
-  background-color: var(--color-tag);
-  border: var(--border) var(--background-color-primary);
+  color: var(--color-tag);
+
+  user-select: none;
+  cursor: pointer;
   white-space: nowrap;
-}
-.tag.rap {
-  background-color: var(--color-rap);
-}
-.tag.rock {
-  background-color: var(--color-rock);
-}
-.tag.electronic {
-  background-color: var(--color-electronic);
-}
-.tag.pop {
-  background-color: var(--color-pop);
-}
-.tag.rnb {
-  background-color: var(--color-rnb);
-}
-.tag.folk {
-  background-color: var(--color-folk);
-}
-.tag.classical {
-  background-color: var(--color-classical);
-}
-.tag.podcast {
-  background-color: var(--color-podcast);
-}
-.tag.soundtrack {
-  background-color: var(--color-soundtrack);
+
+  transition: var(--transition);
 }
 
-.tags-container.select-tags {
+.tag.rap {
+  --color-tag: var(--color-rap);
+}
+.tag.rock {
+  --color-tag: var(--color-rock);
+}
+.tag.metal {
+  --color-tag: var(--color-metal);
+}
+.tag.electronic {
+  --color-tag: var(--color-electronic);
+}
+.tag.pop {
+  --color-tag: var(--color-pop);
+}
+.tag.rnb {
+  --color-tag: var(--color-rnb);
+}
+.tag.folk {
+  --color-tag: var(--color-folk);
+}
+.tag.classical {
+  --color-tag: var(--color-classical);
+}
+.tag.alternative {
+  --color-tag: var(--color-alternative);
+}
+.tag.podcast {
+  --color-tag: var(--color-podcast);
+}
+.tag.soundtrack {
+  --color-tag: var(--color-soundtrack);
+}
+.tag.children {
+  --color-tag: var(--color-children);
+}
+.tag.reggae {
+  --color-tag: var(--color-reggae);
+}
+.tag.other {
+  --color-tag: var(--ym-controls-color-primary-text-enabled);
+}
+
+.tags-container.overlay-tags-container {
   flex-direction: column;
   height: 50vh;
   align-items: flex-start;
@@ -49,78 +72,7 @@
   flex-wrap: nowrap;
 }
 
-.select-tag {
-  background-color: var(--background-color-primary);
-  user-select: none;
-  white-space: nowrap;
-  text-decoration: none;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  padding: var(--padding-tag);
-  white-space: nowrap;
-  border-style: solid;
-  border-width: 1px;
-  border-color: var(--color-tag);
-}
-
-.select-tag.rap {
-  border-color: var(--color-rap);
-}
-.select-tag.rock {
-  border-color: var(--color-rock);
-}
-.select-tag.electronic {
-  border-color: var(--color-electronic);
-}
-.select-tag.pop {
-  border-color: var(--color-pop);
-}
-.select-tag.rnb {
-  border-color: var(--color-rnb);
-}
-.select-tag.folk {
-  border-color: var(--color-folk);
-}
-.select-tag.classical {
-  border-color: var(--color-classical);
-}
-.select-tag.podcast {
-  border-color: var(--color-podcast);
-}
-.select-tag.soundtrack {
-  border-color: var(--color-soundtrack);
-}
-
-
-.select-tag.selected {
+.tag.selected {
+  color: var(--ym-background-color-primary-enabled-popover);
   background-color: var(--color-tag);
 }
-.select-tag.rap.selected {
-  background-color: var(--color-rap);
-}
-.select-tag.rock.selected {
-  background-color: var(--color-rock);
-}
-.select-tag.electronic.selected {
-  background-color: var(--color-electronic);
-}
-.select-tag.pop.selected {
-  background-color: var(--color-pop);
-}
-.select-tag.rnb.selected {
-  background-color: var(--color-rnb);
-}
-.select-tag.folk.selected {
-  background-color: var(--color-folk);
-}
-.select-tag.classical.selected {
-  background-color: var(--color-classical);
-}
-.select-tag.podcast.selected {
-  background-color: var(--color-podcast);
-}
-.select-tag.soundtrack.selected {
-  background-color: var(--color-soundtrack);
-}
-
-

@@ -1,45 +1,79 @@
-.artist-link {
-    font-weight: bold;
-    text-decoration: none;
-    color: var(--color-primary);
-    transition: var(--transition);
+.table-title-row,
+.table-row {
+    display: flex;
+    gap: var(--ym-spacer-size-xxxl);
+    padding: var(--ym-spacer-size-xs);
 }
 
-.artist-link:hover {
-    color: var(--color-highlight);
-    text-decoration: underline;
-}
-
-#artist-table {
-    width: 100%;
-    border-collapse: separate;
-}
-
-#artist-table-head th {
-    position: sticky;
-    top: var(--header-height);
-    z-index: 999;
-    background: var(--background-color-primary);
-    border-bottom: var(--border) var(--border-color);
-    text-align: left;
-    font-weight: normal;
-    padding: var(--padding-row);
-}
-
-#artist-table-body td {
-    padding: var(--padding-row);
-}
-
-#artist-table-body tr {
+.table-row {
+    border-radius: var(--ym-radius-size-s);
+    align-items: center;
     opacity: 0;
     animation: fadeInUp 0.2s ease forwards;
     animation-delay: var(--cascade-delay, 0s);
 }
 
-#artist-table-body tr:nth-child(even) {
-    background: var(--background-color-highlight);
+.table-row:hover {
+    background-color: var(--ym-surface-color-primary-enabled-list);
+    transition: background-color var(--ym-duration-transition);
 }
 
+.table-title-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ym-spacer-size-xxxs);
+}
+
+#table-body {
+    color: var(--ym-controls-color-primary-text-enabled);
+    padding: var(--ym-spacer-size-xxl);
+}
+
+.tracks-cell,
+.likes-cell,
+.listeners-cell,
+.rating-month-cell {
+    font-size: var(--ym-font-size-label-m);
+}
+
+.name-cell {
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: var(--ym-spacer-size-m);
+}
+
+.artist-cover {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+    background-color: var(--ym-controls-color-secondary-default-disabled);
+    color: var(--ym-controls-color-primary-text-enabled);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.artist-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: var(--ym-background-color-primary-enabled-shimmer);
+    background-size: 400% 400%;
+    animation: loading 1.8s ease-out infinite;
+}
+
+.artist-cover .icon {
+    position: relative;
+}
+
+.name-cell:hover {
+    text-decoration: underline;
+}
 
 .name-cell,
 .name-title {
@@ -47,62 +81,27 @@
 }
 
 .tracks-cell,
-.tracks-title {
-    width: 150px;
-}
-
+.tracks-title,
 .likes-cell,
-.likes-title {
-    width: 150px;
-}
-
+.likes-title,
 .listeners-cell,
-.listeners-title {
-    width: 150px;
-}
-
+.listeners-title,
 .rating-month-cell,
 .rating-month-title {
     width: 150px;
 }
 
 .genres-cell,
-.genres-title {
-    width: 300px;
-}
-
+.genres-title,
 .countries-cell,
 .countries-title {
     width: 300px;
 }
 
-
 .name-container {
     display: flex;
     z-index: 10;
     justify-content: space-between;
-}
-
-.artist-table-title-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-item);
-    z-index: 10;
-}
-
-.message {
-    text-align: center;
-    margin: 0 auto;
-    padding: var(--padding-item);
-    font-style: italic;
-}
-
-.not-visible {
-    display: none;
-}
-
-.listeners-delta {
-    color: var(--color-secondary);
 }
 
 .listeners-delta.rise {
@@ -121,5 +120,51 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+.artist-name,
+.tracks-cell,
+.likes-cell,
+.listeners-cell,
+.rating-month-cell {
+    min-height: 18px;
+    flex: 1;
+}
+
+.genres-cell,
+.countries-cell {
+    min-height: 24px;
+}
+
+.table-row.loading .artist-cover,
+.table-row.loading .artist-name,
+.table-row.loading .tracks-cell,
+.table-row.loading .likes-cell,
+.table-row.loading .listeners-cell,
+.table-row.loading .rating-month-cell,
+.table-row.loading .genres-cell,
+.table-row.loading .countries-cell {
+    background: var(--ym-background-color-primary-enabled-shimmer);
+    background-size: 400% 400%;
+    animation: loading 1.8s ease-out infinite;
+}
+
+.table-row.loading .artist-name,
+.table-row.loading .tracks-cell,
+.table-row.loading .likes-cell,
+.table-row.loading .listeners-cell,
+.table-row.loading .rating-month-cell,
+.table-row.loading .genres-cell,
+.table-row.loading .countries-cell {
+    border-radius: var(--border-radius);
+}
+
+@keyframes loading {
+    0% {
+        background-position: 100% 50%;
+    }
+    to {
+        background-position: 0 50%;
     }
 }

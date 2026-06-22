@@ -1,17 +1,73 @@
+@import url("ym-const.css");
+@import url("const.css");
+@import url("reset.css");
+
+@import url("../fonts/fonts.css");
+
 * {
     box-sizing: border-box;
 }
 
 body {
-    margin: var(--header-height) var(--margin-side);
-    font-family: Roboto, Arial, sans-serif;
-    font-size: 16px;
-    color: var(--color-primary);
-    background-color: var(--background-color-primary);
+    padding: var(--ym-spacer-size-m);
+
+    font-family: var(--ym-font-text);
+    font-size: var(--ym-font-size-label-m);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+    background-color: var(--ym-background-color-primary-enabled-basic);
+
+    font-weight: var(--ym-font-weight-medium);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
 }
 
-/* main {
-    width: 80%;
-    margin: auto 0;
-} */
+main {
+    background-color: var(--ym-layout-background-color);
+    border: var(--ym-layout-border);
+    border-radius: var(--ym-layout-border-radius);
+    
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    transition: var(--transition);
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(var(--average-color-background,var(--ym-background-color-secondary-enabled-blur)) 0,transparent 100%);
+    color: var(--ym-controls-color-primary-text-enabled_variant);
+
+    padding-block-start: var(--ym-spacer-size-xxl);
+    padding-inline-end: var(--ym-spacer-size-xxl);
+    padding-inline-start: var(--ym-spacer-size-xxl);
+
+    backdrop-filter: blur(10px);
+    border-radius: var(--ym-layout-border-radius);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-content: flex-start;
+    align-items: center;
+    margin-block-end: var(--ym-spacer-size-xxl);
+    flex-wrap: wrap;
+    gap: var(--ym-spacer-size-m);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--ym-font-heading);
+    font-weight: var(--ym-font-weight-bold);
+}
+
+h1 {
+    font-size: var(--ym-font-size-headline-xl);
+}
 

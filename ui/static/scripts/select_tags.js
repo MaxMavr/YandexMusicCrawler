@@ -5,13 +5,15 @@ const FILTER_CONFIG = {
         url: '/api/all_genres',
         make: makeGenreTag,
         selected: queryParams.filters.genres,
-        container: document.getElementById('genres-tags-container')
+        container: document.getElementById('genres-tags-container'),
+        info_label_delete: 'Убрать жанр из сортировки'
     },
     countries: {
         url: '/api/all_countries',
         make: makeCountryTag,
         selected: queryParams.filters.countries,
-        container: document.getElementById('countries-tags-container')
+        container: document.getElementById('countries-tags-container'),
+        info_label_delete: 'Убрать страну из сортировки'
     }
 };
 
@@ -30,7 +32,8 @@ function initTagsButtons() {
 
 async function handleTagsButtonClick(event) {
     const button = event.currentTarget;
-    const config = FILTER_CONFIG[button.dataset.type];
+    const type = button.dataset.type;
+    const config = FILTER_CONFIG[type];
 
     if (!config) {
         console.error('Неизвестный тип фильтра');
@@ -41,11 +44,10 @@ async function handleTagsButtonClick(event) {
         const response = await fetch(config.url);
         const data = await response.json();
         const tagsContainer = getTagsContainer();
+        tagsContainer.classList.add('overlay-tags-container');
 
         data.forEach(tagCode => {
             const tag = config.make(tagCode);
-            tag.classList.add('select-tag')
-            tag.classList.remove('tag');
 
             if (config.selected.includes(tagCode)) {
                 tag.classList.add('selected');
@@ -54,8 +56,7 @@ async function handleTagsButtonClick(event) {
             tag.addEventListener('click', e => {
                 handleTagMenuClick(
                     e,
-                    config.container,
-                    config.selected
+                    type
                 );
             });
 
@@ -104,9 +105,10 @@ function createOverlay(button, tags) {
     });
 }
 
-function handleTagMenuClick(event, container, selected) {
+export function handleTagMenuClick(event, type) {
     const tag = event.currentTarget;
     const tagCode = tag.dataset.tagCode;
+    const selected = FILTER_CONFIG[type].selected;
 
     if (selected.includes(tagCode)) {
         tag.classList.remove('selected');
@@ -149,11 +151,9 @@ function renderSelectedTags() {
 
         config.selected.forEach(tagCode => {
             const tag = config.make(tagCode);
-            tag.classList.add('select-tag');
             tag.classList.add('selected');
             tag.classList.add('info-label-button');
-            tag.dataset.text = 'Убрать';
-            tag.classList.remove('tag');
+            tag.dataset.text = config.info_label_delete;
 
             tag.addEventListener('click', (e) => {
                 handleTagClick(e, config.selected)

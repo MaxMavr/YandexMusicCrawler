@@ -11,7 +11,7 @@ export let queryParams = {
 
         min_likes: null,
         max_likes: null,
-        min_tracks: null,
+        min_tracks: 1,
         max_tracks: null,
         min_ratings_month: null,
         max_ratings_month: null,
@@ -22,8 +22,8 @@ export let queryParams = {
     has_more: true,
     page: 1,
     pageSize: 20,
-    sortBy: 'name',
-    sortOrder: 'asc'
+    sortBy: 'id',
+    sortOrder: 'asc', // desc
 };
 
 export function updateQueryParams(newParams) {

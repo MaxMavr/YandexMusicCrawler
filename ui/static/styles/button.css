@@ -1,16 +1,15 @@
 .button-container {
   display: flex;
-  gap: var(--gap-item);
-  z-index: 10;
+  gap: var(--ym-spacer-size-xxxs);
   flex-wrap: wrap;
 }
 
 .button {
   display: flex;
-  gap: var(--gap-item);
+  gap: var(--ym-spacer-size-xxxs);
   align-items: center;
 
-  border-radius: var(--border-radius);
+  border-radius: var(--ym-radius-size-xxxl);
   padding: var(--padding-item);
   transition: var(--transition);
   font-weight: bold;
@@ -20,8 +19,8 @@
   text-decoration: none;
   cursor: pointer;
 
-  color: var(--color-primary);
-  background-color: var(--background-color-highlight);
+  color: var(--ym-controls-color-primary-on_default-enabled);
+  background-color: var(--ym-controls-color-primary-default-enabled);
 }
 
 
@@ -29,22 +28,24 @@
   padding: 0;
   font-weight: normal;
   background-color: transparent;
+  color: var(--ym-controls-color-primary-text-enabled_variant);
 }
 
 .button.clean-button:hover:not(:active) {
-  transform: scale(1, 1);
-  opacity: 100%;
+  background-color: transparent;
 }
 
+.button.clean-button:active {
+  background-color: transparent;
+}
 
 .button:hover:not(:active) {
-  transform: scale(1.05, 1.05);
-  opacity: 100%;
+  background-color: var(--ym-controls-color-primary-default-hovered);
 }
 
 .button:active {
   transition: all 0.1s cubic-bezier(0.75, 0.35, 0.4, 0.99);
-  transform: scale(1, 1);
+  background-color: var(--ym-controls-color-primary-default-enabled);
 }
 
 .button-icon {
@@ -57,19 +58,9 @@
   text-decoration: none;
   cursor: pointer;
 
-  color: var(--color-primary);
+  color: var(--ym-controls-color-primary-text-enabled_variant);
 }
 
 .button-icon.refresh:active {
   transform: rotate(180deg);
-}
-
-.button.running {
-  color: white;
-  background-color: var(--green-color);
-}
-
-.button.stopped {
-  color: white;
-  background-color: var(--red-color);
 }

@@ -64,26 +64,4 @@ export function makeCountryTag(countryCode) {
     return element;
 }
 
-export function makeGenreTags(genres) {
-    const tagsContainer = getTagsContainer();
-
-    genres.forEach(genre => {
-        const tag = makeGenreTag(genre)
-        tagsContainer.appendChild(tag);
-    });
-
-    return tagsContainer;
-}
-
-export function makeCountryTags(countries) {
-    const tagsContainer = getTagsContainer();
-
-    countries.forEach(country => {
-        const tag = makeCountryTag(country)
-        tagsContainer.appendChild(tag);
-    });
-
-    return tagsContainer;
-}
-
 loadData();
