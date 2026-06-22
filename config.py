@@ -32,11 +32,11 @@ class CrawlerConfig:
     api_client_config: ApiClientConfig
     pool_config: PoolConfig
     rate_limiter: float = 3  # 3 запроса/сек
-    refresh_interval: timedelta = timedelta(days=30)  # 30 * 24 * 60 * 60   30 дней
+    refresh_interval: timedelta = timedelta(days=2, hours=0)  # 30 * 24 * 60 * 60 30 дней
     range_artist_id = Range(min=1, max=20_000_000)
     debug_flag: bool = True
     update_batch_size: int = 500
-    strategy = 'update'  # 'order', 'update', 'similar', 'similar-random', 'random'
+    strategy = 'similar'  # 'order', 'update', 'similar', 'similar-random', 'random'
 
 
 @dataclass
