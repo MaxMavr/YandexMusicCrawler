@@ -22,11 +22,11 @@ def create_app(repository: Repository) -> Flask:
 
     @app.route('/api/genre_colors')
     def get_genre_colors():
-        return send_from_directory('static', 'genre_colors.json')
+        return send_from_directory('static', 'assets/genre_colors.json')
 
     @app.route('/api/genre_display_name')
     def get_genre_display_name():
-        return send_from_directory('static', 'genre_display_name.json')
+        return send_from_directory('static', 'assets/genre_display_name.json')
 
     @app.route('/api/random_artist', methods=['POST'])
     def get_random_artist():

@@ -1,0 +1,279 @@
+[
+  {
+    "match": [
+      "rap",
+      "rusrap",
+      "foreignrap",
+      "turkishrap",
+      "arabicrap",
+      "moroccanrap",
+      "kazakhrap",
+      "uzbekrap",
+      "israelirap",
+      "levantrap",
+      "egyptrap",
+      "khaleejirap"
+    ],
+    "class": "rap"
+  },
+  {
+    "match": [
+      "rock",
+      "rusrock",
+      "ukrrock",
+      "allrock",
+      "hardrock",
+      "alternativemetal",
+      "stonerrock",
+      "israelirock",
+      "turkishrock",
+      "folkrock",
+      "postrock",
+      "prog",
+      "progmetal"
+    ],
+    "class": "rock"
+  },
+  {
+    "match": [
+      "metal",
+      "punk",
+      "hardcore",
+      "posthardcore",
+      "numetal",
+      "industrial",
+      "thrashmetal",
+      "metalcoregenre",
+      "gothicmetal",
+      "classicmetal",
+      "epicmetal",
+      "folkmetal",
+      "deathmetal",
+      "sludgemetal",
+      "blackmetal",
+      "doommetal",
+      "postmetal",
+      "newwave",
+      "postpunk",
+      "ska",
+      "rnr"
+    ],
+    "class": "metal"
+  },
+  {
+    "match": [
+      "electronic",
+      "electronics",
+      "edm",
+      "edmgenre",
+      "techno",
+      "house",
+      "trance",
+      "dubstep",
+      "dnb",
+      "breakbeat",
+      "breakbeatgenre",
+      "garage",
+      "ukgaragegenre",
+      "dance",
+      "idm",
+      "idmgenre",
+      "phonk",
+      "phonkgenre",
+      "bassgenre",
+      "triphopgenre",
+      "disco",
+      "dub",
+      "lounge"
+    ],
+    "class": "electronic"
+  },
+  {
+    "match": [
+      "pop",
+      "ruspop",
+      "hyperpop",
+      "hyperpopgenre",
+      "kpop",
+      "estrada",
+      "rusestrada",
+      "kazestrada",
+      "levantpop",
+      "arabicpop",
+      "egyptianpop",
+      "iraqipop",
+      "turkishpop",
+      "israelipop",
+      "moroccanpop",
+      "uzbekpop",
+      "qazaqpop",
+      "khaleejipop",
+      "azerbaijanpop",
+      "uzretropop",
+      "japanesepop",
+      "reggaeton",
+      "musical",
+      "vocal",
+      "disco"
+    ],
+    "class": "pop"
+  },
+  {
+    "match": [
+      "jazz",
+      "blues",
+      "soul",
+      "funk",
+      "rnb",
+      "bebop",
+      "bebopgenre",
+      "bigbands",
+      "conjazz",
+      "vocaljazz",
+      "smoothjazz",
+      "tradjazz"
+    ],
+    "class": "rnb"
+  },
+  {
+    "match": [
+      "folk",
+      "country",
+      "celtic",
+      "african",
+      "balkan",
+      "armenian",
+      "georgian",
+      "tatar",
+      "jewish",
+      "folkgenre",
+      "amerfolk",
+      "rusfolk",
+      "eurofolk",
+      "latinfolk",
+      "turkishfolk",
+      "kazachfolk",
+      "kazakhfolk",
+      "uzbekfolk",
+      "bard",
+      "rusbards",
+      "foreignbard",
+      "shanson",
+      "romances",
+      "argentinetango",
+      "caucasian",
+      "mizrahi",
+      "azerbaijani",
+      "arabesquemusic",
+      "tarab",
+      "raigenre",
+      "shelatgenre",
+      "mahraganat"
+    ],
+    "class": "folk"
+  },
+  {
+    "match": [
+      "classical",
+      "ambient",
+      "ambientgenre",
+      "newage",
+      "meditation",
+      "relax",
+      "classicalmasterpieces",
+      "classicalmusic",
+      "turkishclassical",
+      "naturesounds",
+      "lounge",
+      "work"
+    ],
+    "class": "classical"
+  },
+  {
+    "match": [
+      "alternative",
+      "indie",
+      "local-indie",
+      "experimental",
+      "modern",
+      "prog",
+      "turkishalternative",
+      "postpunk",
+      "newwave"
+    ],
+    "class": "alternative"
+  },
+  {
+    "match": [
+      "audiobooks",
+      "fiction",
+      "biographyandmemoirs",
+      "poetrygenre",
+      "podcasts",
+      "nonfictionliterature",
+      "romancenovel",
+      "selfdevelopment",
+      "sciencefiction",
+      "fantasyliterature",
+      "actionandadventure",
+      "crimeandmystery",
+      "historicalfiction",
+      "dramaliterature",
+      "horrorandthrillers",
+      "popularsciencebooks",
+      "audiobooksinenglish",
+      "psychologyandphilosophy",
+      "booksnotinrussian",
+      "technologies",
+      "religionandspirituality",
+      "community",
+      "sport",
+      "arabicpoetry"
+    ],
+    "class": "podcast"
+  },
+  {
+    "match": [
+      "anime",
+      "animemusic",
+      "videogame",
+      "soundtrack",
+      "films",
+      "tvseries",
+      "animated",
+      "bollywood",
+      "eastern",
+      "holiday",
+      "islamicgenre"
+    ],
+    "class": "soundtrack"
+  },
+  {
+    "match": [
+      "children",
+      "forchildren",
+      "lullaby",
+      "fairytales",
+      "childrensliterature",
+      "arabickids",
+      "poemsforchildren"
+    ],
+    "class": "children"
+  },
+  {
+    "match": [
+      "reggae",
+      "ska",
+      "dub"
+    ],
+    "class": "reggae"
+  },
+  {
+    "match": [
+      "other",
+      "hls",
+      "vocal"
+    ],
+    "class": "other"
+  }
+]
