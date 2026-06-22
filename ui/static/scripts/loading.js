@@ -1,23 +1,45 @@
-const ARTIST_ROW_TEMPLATE = document.getElementById('artist-row-template');
-import { makeGenreTags, makeCountryTags } from './tags.js';
+const ROW_TEMPLATE = document.getElementById('row-template');
+import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
 import { initInfoLabelButtons } from './info.js';
+import { handleTagMenuClick } from './select_tags.js';
 const CASCADE_DELAY = 0.05;
-
+const DEFAULT_ARTIST_COVER_TEMPLATE = document.getElementById('default-artist-cover-template');
 
 const formatNumber = value => value.toLocaleString('ru-RU');
 
+function makeLoadingRow(index) {
+    const row = ROW_TEMPLATE.content.cloneNode(true);
+    const rowElement = row.querySelector('.table-row');
+
+    rowElement.classList.add('loading');
+    rowElement.style.setProperty(
+        '--cascade-delay',
+        `${index * CASCADE_DELAY}s`
+    );
+
+    return rowElement;
+}
+
 
 function makeArtistRow(artist, index) {
-    const row = ARTIST_ROW_TEMPLATE.content.cloneNode(true);
-    const rowElement = row.querySelector('tr');
-
+    const row = ROW_TEMPLATE.content.cloneNode(true);
+    const rowElement = row.querySelector('.table-row');
     rowElement.style.setProperty('--cascade-delay', `${index * CASCADE_DELAY}s`);
 
     const nameCell = row.querySelector('.name-cell');
+    nameCell.href = `https://music.yandex.ru/artist/${artist.id}`;
 
-    const link = nameCell.querySelector('.artist-link');
-    link.href = `https://music.yandex.ru/artist/${artist.id}`;
-    link.textContent = artist.name;
+    const cover = nameCell.querySelector('.artist-cover');
+    if (artist.cover_uri && artist.cover_uri.trim() !== '') {
+        const img = document.createElement('img');
+        img.src = "https://" + artist.cover_uri.replace('/1000x1000', '/50x50');
+        cover.appendChild(img);
+    } else {
+        cover.appendChild(DEFAULT_ARTIST_COVER_TEMPLATE.content.cloneNode(true));
+    }
+
+    const name = nameCell.querySelector('.artist-name');
+    name.textContent = artist.name;
 
     row.querySelector('.tracks-cell').textContent =
         formatNumber(artist.tracks_count);
@@ -38,30 +60,59 @@ function makeArtistRow(artist, index) {
     
     deltaCell.textContent =
         `${deltaValue >= 0 ? '+' : '−'}${formatNumber(Math.abs(deltaValue))}`;
-    
+
     row.querySelector('.rating-month-cell').textContent =
         formatNumber(artist.ratings_month);
 
+    const genresTagsContainer = getTagsContainer();
+    artist.genres.forEach(tagCode => {
+        const tag = makeGenreTag(tagCode);
+        tag.addEventListener('click', e => {
+            handleTagMenuClick(
+                e,
+                'genres'
+            );
+        });
+        tag.classList.add('info-label-button');
+        if (queryParams.filters.genres.includes(tagCode)) {
+            tag.dataset.text = 'Убрать жанр из сортировки';
+        } else {
+            tag.dataset.text = 'Добавить жанр в сортировку';
+        }
+        genresTagsContainer.appendChild(tag);
+    });
     const genresContainer = row.querySelector('.genres-cell');
-    genresContainer.appendChild(
-        makeGenreTags(artist.genres)
-    );
+    genresContainer.appendChild(genresTagsContainer);
+    
+    const countryTagsContainer = getTagsContainer();
+    artist.countries.forEach(tagCode => {
+        const tag = makeCountryTag(tagCode);
+        tag.addEventListener('click', e => {
+            handleTagMenuClick(
+                e,
+                'countries'
+            );
+        });
+        tag.classList.add('info-label-button');
 
+        if (queryParams.filters.countries.includes(tagCode)) {
+            tag.dataset.text = 'Убрать страну из сортировки';
+        } else {
+            tag.dataset.text = 'Добавить страну в сортировку';
+        }
+
+        countryTagsContainer.appendChild(tag);
+    });
     const countryContainer = row.querySelector('.countries-cell');
-    countryContainer.appendChild(
-        makeCountryTags(artist.countries)
-    );
+    countryContainer.appendChild(countryTagsContainer);
 
     initInfoLabelButtons(row);
-
     return row;
 }
 
-const SCROLL_THRESHOLD = 400;
-const ARTIST_TBODY = document.getElementById('artist-table-body');
-const LOADING_MESSAGE = document.getElementById('loading-message');
-const EMPTY_MESSAGE = document.getElementById('empty-message');
+const TABLE_BODY = document.getElementById('table-body');
 const ARTIST_TOTAL = document.getElementById('artist-total');
+const EMPTY_TEMPLATE = document.getElementById('empty-template');
 
 import { queryParams } from './state.js';
 let controller;
@@ -70,8 +121,6 @@ let isLoading = false;
 
 export async function loadArtistPage(reset = false) {    
     if (isLoading && !reset) return;
-    
-    
     if (isLoading || !queryParams.has_more) return;
 
     if (reset) {
@@ -79,15 +128,20 @@ export async function loadArtistPage(reset = false) {
         controller = new AbortController();
     }
 
+    if (queryParams.page === 1) {
+        TABLE_BODY.replaceChildren();
+    }
+
     isLoading = true;
-    LOADING_MESSAGE.classList.remove('not-visible');
-    EMPTY_MESSAGE.classList.add('not-visible');
+
+    const loadingRows = [];
+    for (let i = 0; i < queryParams.pageSize; i++) {
+        const row = makeLoadingRow(i);
+        loadingRows.push(row);
+        TABLE_BODY.appendChild(row);
+    }
 
     try {
-        if (queryParams.page === 1) {
-            ARTIST_TBODY.replaceChildren();
-        }
-
         const response = await fetch('/api/artists', {
             method: 'POST',
             headers: {
@@ -97,16 +151,27 @@ export async function loadArtistPage(reset = false) {
         });
 
         const data = await response.json();
-        const fragment = document.createDocumentFragment();
-
+        
         data.artists.forEach((artist, index) => {
-            fragment.appendChild(makeArtistRow(artist, index));
+            const newRow = makeArtistRow(artist, index);
+
+            if (loadingRows[index]) {
+                loadingRows[index].replaceWith(
+                    newRow.querySelector('.table-row')
+                );
+            } else {
+                TABLE_BODY.appendChild(newRow);
+            }
         });
 
-        ARTIST_TBODY.appendChild(fragment);
+        for (let i = data.artists.length; i < loadingRows.length; i++) {
+            if (loadingRows[i]) {
+                loadingRows[i].remove();
+            }
+        }
 
         if (data.total === 0) {
-            EMPTY_MESSAGE.classList.remove('not-visible');
+            TABLE_BODY.appendChild(EMPTY_TEMPLATE.content.cloneNode(true));
         }
 
         ARTIST_TOTAL.textContent =
@@ -121,7 +186,6 @@ export async function loadArtistPage(reset = false) {
         console.error('Ошибка загрузки:', error);
     } finally {
         isLoading = false;
-        LOADING_MESSAGE.classList.add('not-visible');
     }
 }
 
