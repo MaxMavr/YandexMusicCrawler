@@ -79,16 +79,24 @@ function createOverlay(button, tags) {
     overlayElement.appendChild(tags);
     document.body.appendChild(overlayElement);
 
-    const rect = button.getBoundingClientRect();
-    const width = overlayElement.getBoundingClientRect().width;
+    const window_width = window.innerWidth;
 
-    overlayElement.style.top = `${rect.top}px`;
-
-    if (rect.left + width < window.innerWidth) {
-        overlayElement.style.left = `${rect.left}px`;
+    if (window_width < 1200) {
+        overlayElement.style.width = '100vw';
+        overlayElement.style.left = 0;
+        overlayElement.style.bottom = 0;
     } else {
-        overlayElement.style.right =
-            `${window.innerWidth - rect.right}px`;
+        const rect = button.getBoundingClientRect();
+        const width = overlayElement.getBoundingClientRect().width;
+
+        overlayElement.style.top = `${rect.top}px`;
+
+        if (rect.left + width < window.innerWidth) {
+            overlayElement.style.left = `${rect.left}px`;
+        } else {
+            overlayElement.style.right =
+                `${window.innerWidth - rect.right}px`;
+        }
     }
 
     function handleOutsideClick(e) {

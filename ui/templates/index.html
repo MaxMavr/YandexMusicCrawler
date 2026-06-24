@@ -25,17 +25,30 @@
           </div>
           
           <div class="container button-container">
-            <button class="button info-hint-button" data-text="Случайный артист из списка" id="random-button">
-              {% include 'icons/play.svg' %}
-              <span class="button-title">Случайный</span>
-            </button>
-            <button class="button button-secondary info-hint-button" data-text="Обновить" id="refresh-button">
-              {% include 'icons/refresh.svg' %}
-              <span style="min-width: 50px;" class="updated-title" id="artist-total"></span>
-            </button>
-            <button class="button button-secondary button-icon info-hint-button" data-text="Сортировать" id="refresh-button">
-              {% include 'icons/filter.svg' %}
-            </button>
+            <div class="container button-sublabel-container">
+              <button class="button info-hint-button" data-text="Случайный артист из списка" id="random-button">
+                {% include 'icons/play.svg' %}
+                <span class="button-label updated-label ">Случайный</span>
+              </button>
+              <span class="button-sublabel">Случайный</span>
+            </div>
+
+            <div class="container button-sublabel-container" id="refresh-button">
+              <button class="button button-secondary info-hint-button" data-text="Обновить">
+                {% include 'icons/refresh.svg' %}
+                <span class="button-label total-artist-label updated-label"></span>
+              </button>
+              <span class="button-sublabel updated-label total-artist-label"></span>
+            </div>
+
+            <div class="container button-sublabel-container" id="sorting-menu-button">
+              <button class="button button-secondary button-icon info-hint-button" data-text="Сортировать">
+                {% include 'icons/filter.svg' %}
+                <span class="button-label updated-label ">Сортировать</span>
+              </button>
+              <span class="button-sublabel">Фильтры</span>
+            </div>
+
           </div>
         </div>
         
@@ -52,16 +65,16 @@
             <input id="name_contains" class="input" type="text" placeholder="Поиск…">
           </div>
 
-          <div class="container tracks-cell tracks-cell-title number-cell cell-title">
+          <div class="container listeners-cell listeners-cell-title number-cell cell-title">
             <div class="container table-title-container">
-              <span>Треки</span>
-              <button class="button ghost-button sorting-button info-hint-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
+              <span>Слушатели</span>
+              <button class="button ghost-button sorting-button info-hint-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
                 {% include 'icons/sorting.svg' %}
               </button>
             </div>
 
-            <input id="min_tracks" class="input info-hint-button" data-text="Минимальное количество треков" type="number" placeholder="от" value="1">
-            <input id="max_tracks" class="input info-hint-button" data-text="Максимальное количество треков" type="number" placeholder="до">
+            <input id="min_listeners" class="input info-hint-button" data-text="Минимальное количество слушателей" type="number" placeholder="от">
+            <input id="max_listeners" class="input info-hint-button" data-text="Максимальное количество слушателей" type="number" placeholder="до">
           </div>
 
           <div class="container likes-cell likes-cell-title number-cell cell-title">
@@ -76,16 +89,16 @@
             <input id="max_likes" class="input info-hint-button" data-text="Максимальное количество лайков" type="number" placeholder="до">
           </div>
 
-          <div class="container listeners-cell listeners-cell-title number-cell cell-title">
+          <div class="container tracks-cell tracks-cell-title number-cell cell-title">
             <div class="container table-title-container">
-              <span>Слушатели</span>
-              <button class="button ghost-button sorting-button info-hint-button" data-text="Отсортировать по слушателям" data-sort-by="last_month_listeners" data-sort-order="ASC">
+              <span>Треки</span>
+              <button class="button ghost-button sorting-button info-hint-button" data-text="Отсортировать по трекам" data-sort-by="tracks_count" data-sort-order="ASC">
                 {% include 'icons/sorting.svg' %}
               </button>
             </div>
 
-            <input id="min_listeners" class="input info-hint-button" data-text="Минимальное количество слушателей" type="number" placeholder="от">
-            <input id="max_listeners" class="input info-hint-button" data-text="Максимальное количество слушателей" type="number" placeholder="до">
+            <input id="min_tracks" class="input info-hint-button" data-text="Минимальное количество треков" type="number" placeholder="от" value="1">
+            <input id="max_tracks" class="input info-hint-button" data-text="Максимальное количество треков" type="number" placeholder="до">
           </div>
 
           <div class="container ratings-month-cell ratings-month-cell-title number-cell cell-title">
@@ -133,11 +146,11 @@
       </div>
     </main>
 
-    <!-- <div id="splash-screen">
+    <div id="splash-screen">
       <video id="splash-video" autoplay muted playsinline>
         <source src="{{ url_for('static', filename='assets/splash.webm') }}" type="video/webm" />
       </video>
-    </div> -->
+    </div>
 
     <template id="default-artist-cover-template">
       {% include 'icons/note.svg' %}
@@ -169,39 +182,42 @@
 
     <template id="row-template">
       <div class="table-row">
-        <span class="row-number updated-title"></span>
+        <span class="row-number updated-label"></span>
 
         <a class="container name-cell info-hint-button" data-text="Ссылка на Яндекс Музыку" target="_blank">
-          <div class="artist-cover updated-title"></div>
-          <span class="artist-name updated-title"></span>
+          <div class="artist-cover updated-label"></div>
+          <span class="artist-name updated-label"></span>
         </a>
 
+        <div class="table-values">
+          <div class="container listeners-cell info-hint-button number-cell" data-text="Количество слушателей за месяц">
+            {% include 'icons/users.svg' %}
+            <span class="listeners-label number-label updated-label"></span>
+            <span class="listeners-delta"></span>
+          </div>
+          
+          <div class="table-secondary-values">
+            <div class="container likes-cell info-hint-button number-cell" data-text="Количество лайков">
+              {% include 'icons/like.svg' %}
+              <span class="likes-label number-label updated-label"></span>
+            </div>
+            
+            <div class="container tracks-cell info-hint-button number-cell" data-text="Количество треков">
+              {% include 'icons/vinyl.svg' %}
+              <span class="tracks-label number-label updated-label"></span>
+            </div>
 
-        <div class="container tracks-cell info-hint-button number-cell updated-title" data-text="Количество треков">
-          {% include 'icons/tracks.svg' %}
-          <span class="tracks-title"></span>
-        </div>
+            <div class="container ratings-month-cell number-cell info-hint-button" data-text="Рейтинг за месяц">
+              {% include 'icons/crown.svg' %}
+              <span class="ratings-label number-label updated-label"></span>
+            </div>
+          </div>
 
-        <div class="container likes-cell info-hint-button number-cell updated-title" data-text="Количество лайков">
-          {% include 'icons/likes.svg' %}
-          <span class="likes-title"></span>
+          <div class="table-tags tag-container container">
+            <div class="genres-cell tag-cell updated-label"></div>
+            <div class="countries-cell tag-cell updated-label"></div>
+          </div>
         </div>
-
-        <div class="container listeners-cell info-hint-button number-cell updated-title" data-text="Количество слушателей за месяц">
-          {% include 'icons/users.svg' %}
-          <span class="listeners"></span>
-          <span class="listeners-delta"></span>
-          <span class="listeners-title">слушателей в месяц</span>
-        </div>
-        
-        
-        <div class="container ratings-month-cell number-cell info-hint-button updated-title" data-text="Рейтинг за месяц">
-          {% include 'icons/crown.svg' %}
-          <span class="crown-title"></span>
-        </div>
-
-        <div class="genres-cell tag-cell updated-title"></div>
-        <div class="countries-cell tag-cell updated-title"></div>
       </div>
     </template>
 

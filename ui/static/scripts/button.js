@@ -1,5 +1,4 @@
-// import { updateQueryParams, updateQueryFilterParams, queryParams } from './state.js';
-import { updateQueryParams, resetPagination } from './state.js';
+import { updateQueryParams, resetPagination, queryParams } from './state.js';
 import { loadArtistPage, isLoading } from './loading.js';
 import { getArtistUrl } from './links.js';
 
@@ -92,6 +91,50 @@ async function initRandomButtons() {
     });
 }
 
+const TABLE_HEAD = document.getElementById('table-head');
+
+function initSortingMenuButtons() {
+    const button = document.getElementById('sorting-menu-button');
+    let isVisible = false;
+
+    function handleOutsideClick(e) {
+        if (!TABLE_HEAD.contains(e.target)) {
+            hideTableHead();
+            document.removeEventListener('click', handleOutsideClick);
+        }
+    }
+
+    function showTableHead() {
+        TABLE_HEAD.classList.remove('hidden');
+        TABLE_HEAD.classList.add('visible');
+        TABLE_HEAD.style.display = 'flex';
+        isVisible = true;
+    }
+
+    function hideTableHead() {
+        TABLE_HEAD.classList.remove('visible');
+        TABLE_HEAD.classList.add('hidden');
+        isVisible = false;
+        
+        setTimeout(() => {
+            TABLE_HEAD.style.display = 'none';
+        }, 200);
+    }
+
+    button.addEventListener('click', async () => {
+        if (isVisible) {
+            hideTableHead();
+            document.removeEventListener('click', handleOutsideClick);
+        } else {
+            showTableHead();
+            setTimeout(() => {
+                document.addEventListener('click', handleOutsideClick);
+            }, 10);
+        }
+    });
+}
+
+initSortingMenuButtons();
 initRandomButtons();
 initRefreshButtons();
 initSortingButtons();

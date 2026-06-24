@@ -44,13 +44,13 @@ function makeArtistRow(artist, index, rowNumber) {
     const name = nameCell.querySelector('.artist-name');
     name.textContent = artist.name;
 
-    row.querySelector('.tracks-title').textContent =
+    row.querySelector('.tracks-label').textContent =
         formatNumber(artist.tracks_count);
 
-    row.querySelector('.likes-title').textContent =
+    row.querySelector('.likes-label').textContent =
         formatNumber(artist.likes_count);
 
-    row.querySelector('.listeners').textContent =
+    row.querySelector('.listeners-label').textContent =
         formatNumber(artist.last_month_listeners);
 
     let deltaCell = row.querySelector('.listeners-delta');
@@ -64,7 +64,7 @@ function makeArtistRow(artist, index, rowNumber) {
     deltaCell.textContent =
         `${deltaValue >= 0 ? '+' : '−'}${formatNumber(Math.abs(deltaValue))}`;
 
-    row.querySelector('.crown-title').textContent =
+    row.querySelector('.ratings-label').textContent =
         formatNumber(artist.ratings_month);
 
     const genresTagsContainer = getTagsContainer();
@@ -113,7 +113,7 @@ function makeArtistRow(artist, index, rowNumber) {
 }
 
 const TABLE_BODY = document.getElementById('table-body');
-const ARTIST_TOTAL = document.getElementById('artist-total');
+const TOTAL_ARTIST_LABELS = document.querySelectorAll('.total-artist-label');
 const EMPTY_TEMPLATE = document.getElementById('empty-template');
 const RANDOM_BUTTON = document.getElementById('random-button');
 const REFRESH_BUTTON = document.getElementById('refresh-button');
@@ -136,7 +136,10 @@ export async function loadArtistPage(reset = false) {
     }
 
     isLoading = true;
-    ARTIST_TOTAL.textContent = '';
+
+    TOTAL_ARTIST_LABELS.forEach( label => {
+        label.textContent = '';
+    });
     REFRESH_BUTTON.classList.add('loading')
 
     const loadingRows = [];
@@ -184,8 +187,10 @@ export async function loadArtistPage(reset = false) {
         }
 
         REFRESH_BUTTON.classList.remove('loading')
-        ARTIST_TOTAL.textContent =
-            formatNumber(data.total);
+
+        TOTAL_ARTIST_LABELS.forEach( label => {
+            label.textContent = formatNumber(data.total);
+        });
 
         Object.assign(queryParams, {
             has_more: data.has_next,

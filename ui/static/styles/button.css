@@ -4,6 +4,12 @@
 }
 
 
+.button-sublabel-container {
+  gap: var(--ym-spacer-size-xxs);
+  align-items: center;
+  flex-direction: column;
+}
+
 .button {
   display: flex;
   align-items: center;
@@ -59,9 +65,12 @@
 }
 
 
-.button:disabled {
+.button:disabled,
+.button:disabled:hover,
+.button:disabled:active {
   background: var(--ym-controls-color-secondary-default-disabled);
   color: var(--ym-controls-color-secondary-on_default-disabled);
+  pointer-events: none;
 }
 
 
@@ -83,3 +92,35 @@
   cursor: pointer;
   user-select: none;
 }
+
+.loading .button-label,
+.loading .button-sublabel {
+  width: 50px;
+}
+
+.button-sublabel {
+  display: none;
+}
+
+@media (max-width: 1200px) {
+  #sorting-menu-button {
+    display: flex;
+  }
+}
+
+
+@media (max-width: 800px) {
+  .button {
+    padding: var(--ym-spacer-size-s);
+  }
+  
+  .button-label {
+    display: none;
+  }
+
+  .button-sublabel {
+    display: flex;
+  }
+}
+
+
