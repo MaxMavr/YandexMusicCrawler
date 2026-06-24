@@ -1,10 +1,13 @@
 import { makeGenreTag, makeCountryTag, getTagsContainer } from './tags.js';
 import { setupInfoLabelButton, initInfoLabelButtons } from './info.js';
+import { getArtistUrl, getArtistAvatar } from './links.js';
 import { handleTagMenuClick } from './select_tags.js';
 
 const ROW_TEMPLATE = document.getElementById('row-template');
 const CASCADE_DELAY = 0.05;
 const DEFAULT_ARTIST_COVER_TEMPLATE = document.getElementById('default-artist-cover-template');
+const COVER_IMAGE_SIZES = [50, 100, 200, 400, 800];
+
 
 const formatNumber = value => value.toLocaleString('ru-RU');
 
@@ -17,18 +20,22 @@ function makeLoadingRow(index) {
 }
 
 
-function makeArtistRow(artist, index) {
+function makeArtistRow(artist, index, rowNumber) {
     const row = ROW_TEMPLATE.content.cloneNode(true);
     const rowElement = row.querySelector('.table-row');
     rowElement.style.setProperty('--cascade-delay', `${index * CASCADE_DELAY}s`);
 
+    const numberCell = row.querySelector('.row-number');
+    numberCell.textContent = rowNumber;
+    
     const nameCell = row.querySelector('.name-cell');
-    nameCell.href = `https://music.yandex.ru/artist/${artist.id}`;
+    nameCell.href = getArtistUrl(artist.id);
 
     const cover = nameCell.querySelector('.artist-cover');
     if (artist.cover_uri && artist.cover_uri.trim() !== '') {
         const img = document.createElement('img');
-        img.src = "https://" + artist.cover_uri.replace('/1000x1000', '/50x50');
+        img.srcset = COVER_IMAGE_SIZES.map(s => `${getArtistAvatar(artist.cover_uri, s)} ${s}w`).join(', ');
+        img.src = getArtistAvatar(artist.cover_uri, 50);
         cover.appendChild(img);
     } else {
         cover.appendChild(DEFAULT_ARTIST_COVER_TEMPLATE.content.cloneNode(true));
@@ -37,10 +44,10 @@ function makeArtistRow(artist, index) {
     const name = nameCell.querySelector('.artist-name');
     name.textContent = artist.name;
 
-    row.querySelector('.tracks-cell').textContent =
+    row.querySelector('.tracks-title').textContent =
         formatNumber(artist.tracks_count);
 
-    row.querySelector('.likes-cell').textContent =
+    row.querySelector('.likes-title').textContent =
         formatNumber(artist.likes_count);
 
     row.querySelector('.listeners').textContent =
@@ -57,7 +64,7 @@ function makeArtistRow(artist, index) {
     deltaCell.textContent =
         `${deltaValue >= 0 ? '+' : '−'}${formatNumber(Math.abs(deltaValue))}`;
 
-    row.querySelector('.rating-month-cell').textContent =
+    row.querySelector('.crown-title').textContent =
         formatNumber(artist.ratings_month);
 
     const genresTagsContainer = getTagsContainer();
@@ -108,10 +115,11 @@ function makeArtistRow(artist, index) {
 const TABLE_BODY = document.getElementById('table-body');
 const ARTIST_TOTAL = document.getElementById('artist-total');
 const EMPTY_TEMPLATE = document.getElementById('empty-template');
-
+const RANDOM_BUTTON = document.getElementById('random-button');
+const REFRESH_BUTTON = document.getElementById('refresh-button');
 import { queryParams } from './state.js';
 let controller;
-let isLoading = false;
+export let isLoading = false;
 
 
 export async function loadArtistPage(reset = false) {    
@@ -128,6 +136,8 @@ export async function loadArtistPage(reset = false) {
     }
 
     isLoading = true;
+    ARTIST_TOTAL.textContent = '';
+    REFRESH_BUTTON.classList.add('loading')
 
     const loadingRows = [];
     for (let i = 0; i < queryParams.pageSize; i++) {
@@ -148,7 +158,8 @@ export async function loadArtistPage(reset = false) {
         const data = await response.json();
         
         data.artists.forEach((artist, index) => {
-            const newRow = makeArtistRow(artist, index);
+            const rowNumber = ((data.page - 1) * data.page_size) + index + 1;
+            const newRow = makeArtistRow(artist, index, rowNumber);
 
             if (loadingRows[index]) {
                 loadingRows[index].replaceWith(
@@ -164,11 +175,15 @@ export async function loadArtistPage(reset = false) {
                 loadingRows[i].remove();
             }
         }
-
+        
         if (data.total === 0) {
             TABLE_BODY.appendChild(EMPTY_TEMPLATE.content.cloneNode(true));
+            RANDOM_BUTTON.disabled = true;
+        } else {
+            RANDOM_BUTTON.disabled = false;
         }
 
+        REFRESH_BUTTON.classList.remove('loading')
         ARTIST_TOTAL.textContent =
             formatNumber(data.total);
 

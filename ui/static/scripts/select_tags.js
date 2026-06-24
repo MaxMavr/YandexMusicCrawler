@@ -5,14 +5,14 @@ const FILTER_CONFIG = {
         url: '/api/all_genres',
         make: makeGenreTag,
         selected: queryParams.filters.genres,
-        container: document.getElementById('genres-tags-container'),
+        container: document.getElementById('genres-tag-container'),
         info_label_delete: 'Убрать жанр из сортировки'
     },
     countries: {
         url: '/api/all_countries',
         make: makeCountryTag,
         selected: queryParams.filters.countries,
-        container: document.getElementById('countries-tags-container'),
+        container: document.getElementById('countries-tag-container'),
         info_label_delete: 'Убрать страну из сортировки'
     }
 };
@@ -45,13 +45,13 @@ async function handleTagsButtonClick(event) {
         const response = await fetch(config.url);
         const data = await response.json();
         const tagsContainer = getTagsContainer();
-        tagsContainer.classList.add('overlay-tags-container');
+        tagsContainer.classList.add('overlay-tag-container');
 
         data.forEach(tagCode => {
             const tag = config.make(tagCode);
 
             if (config.selected.includes(tagCode)) {
-                tag.classList.add('selected');
+                tag.classList.add('tag-selected');
             }
 
             tag.addEventListener('click', e => {
@@ -64,7 +64,7 @@ async function handleTagsButtonClick(event) {
             tagsContainer.appendChild(tag);
         });
 
-        tagsContainer.classList.add('select-tags');
+        tagsContainer.classList.add('menu');
         createOverlay(button, tagsContainer);
 
     } catch (error) {
@@ -112,10 +112,10 @@ export function handleTagMenuClick(event, type) {
     const selected = FILTER_CONFIG[type].selected;
 
     if (selected.includes(tagCode)) {
-        tag.classList.remove('selected');
+        tag.classList.remove('tag-selected');
         removeTag(tagCode, selected);
     } else {
-        tag.classList.add('selected');
+        tag.classList.add('tag-selected');
         addTag(tagCode, selected);
     }
 
@@ -152,7 +152,7 @@ function renderSelectedTags() {
 
         config.selected.forEach(tagCode => {
             const tag = config.make(tagCode);
-            tag.classList.add('selected');
+            tag.classList.add('tag-selected');
             setupInfoLabelButton(tag, config.info_label_delete)
 
             tag.addEventListener('click', (e) => {

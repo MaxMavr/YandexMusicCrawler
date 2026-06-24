@@ -1,6 +1,5 @@
-import { updateQueryParams, updateQueryFilterParams, queryParams, resetPagination } from './state.js';
-import { loadArtistPage } from './loading.js';
-
+import { queryParams, resetPagination, updateQueryFilterParams } from './state.js';
+import { loadArtistPage, isLoading } from './loading.js';
 
 function initInput() { 
     const inputs = document.querySelectorAll('.input'); 
@@ -16,6 +15,9 @@ function initInput() {
 
 function handleInput(event) {    
     event.preventDefault();
+    
+    if (isLoading) return;
+
     const input = event.currentTarget;
     const fieldName = input.id;
     const rawValue = input.value;
@@ -48,69 +50,4 @@ function updateInputFilter(fieldName, value) {
     loadArtistPage(true);
 }
 
-
-function initSortingButtons() {
-    document.querySelectorAll('.sorting-button').forEach(button => {
-        button.removeEventListener('click', handleSortClick);
-        button.addEventListener('click', handleSortClick);
-        updateButtonIcon(button);
-    });
-}
-
-function handleSortClick(event) {
-    const button = event.currentTarget;
-    const isActive = button.classList.contains('activated');
-
-    document.querySelectorAll('.sorting-button.activated')
-        .forEach(btn => {
-            if (btn !== button) {
-                btn.classList.remove('activated');
-                btn.dataset.sortOrder = 'ASC';
-                updateButtonIcon(btn);
-            }
-        });
-
-    if (!isActive) {
-        button.classList.add('activated');
-        button.dataset.sortOrder = 'ASC';
-    } else {
-        button.dataset.sortOrder =
-            button.dataset.sortOrder === 'ASC' ? 'DESC' : 'ASC';
-    }
-
-    updateButtonIcon(button);
-
-    updateQueryParams({
-        sortBy: button.dataset.sortBy,
-        sortOrder: button.dataset.sortOrder,
-    });
-
-    resetPagination();
-    loadArtistPage(true);
-}
-
-function updateButtonIcon(button) {
-    const state = !button.classList.contains('activated')
-        ? 'none'
-        : button.dataset.sortOrder.toLowerCase();
-
-    button.querySelector(`.anim-${state}-upper`)?.beginElement();
-    button.querySelector(`.anim-${state}-lower`)?.beginElement();
-}
-
-
-function initRefreshButtons() {
-    const button = document.getElementById('refresh-button');
-    const anim = button.querySelector('.refresh-animation');
-    
-    button.addEventListener('click', () => {
-        resetPagination();
-        anim.beginElement();
-        loadArtistPage(true);
-    });
-}
-
-
-initRefreshButtons();
-initSortingButtons();
 initInput();
