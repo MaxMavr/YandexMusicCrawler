@@ -11,18 +11,20 @@ input[type="number"] {
 
 .input {
   display: block;
-  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
-  border-radius: var(--ym-radius-size-xl);
-  width: 100%;
-  font-size: var(--ym-font-size-label-m);
-  border: var(--border) var(--ym-controls-color-secondary-outline-enabled_stroke);
   outline: none;
-  box-sizing: border-box;
+  width: 100%;
+
+  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
+  
+  font-size: inherit;
+  font-family: inherit;
+  
+  border-radius: var(--ym-radius-size-xl);
+  border: var(--ym-input-border);
   background-color: transparent;
   color: var(--ym-controls-color-secondary-on_outline-enabled);
+  
   transition: var(--transition);
-
-
 }
 
 .input:hover {
@@ -33,7 +35,6 @@ input[type="number"] {
   background-color: var(--ym-controls-color-secondary-default-enabled);
   box-shadow: 0 0 0 .050rem var(--ym-controls-color-secondary-outline-selected_stroke);
 }
-
 
 
 .input::placeholder {

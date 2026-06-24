@@ -1,69 +1,10 @@
-.tags-container {
-  display: flex;
-  gap: var(--ym-spacer-size-xxxs);
+.tag-container {
   align-items: center;
-  flex-wrap: wrap;
+  gap: var(--ym-spacer-size-xxxs);
+  min-height: 24px;
 }
 
-.tag {
-  --color-tag: var(--ym-controls-color-primary-text-enabled);
-  color: var(--color-tag);
-  
-  position: relative;
-
-  border-radius: var(--ym-radius-size-xs);
-  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
-  transition: var(--transition);
-
-  user-select: none;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.tag.rap {
-  --color-tag: var(--color-rap);
-}
-.tag.rock {
-  --color-tag: var(--color-rock);
-}
-.tag.metal {
-  --color-tag: var(--color-metal);
-}
-.tag.electronic {
-  --color-tag: var(--color-electronic);
-}
-.tag.pop {
-  --color-tag: var(--color-pop);
-}
-.tag.rnb {
-  --color-tag: var(--color-rnb);
-}
-.tag.folk {
-  --color-tag: var(--color-folk);
-}
-.tag.classical {
-  --color-tag: var(--color-classical);
-}
-.tag.alternative {
-  --color-tag: var(--color-alternative);
-}
-.tag.podcast {
-  --color-tag: var(--color-podcast);
-}
-.tag.soundtrack {
-  --color-tag: var(--color-soundtrack);
-}
-.tag.children {
-  --color-tag: var(--color-children);
-}
-.tag.reggae {
-  --color-tag: var(--color-reggae);
-}
-.tag.other {
-  --color-tag: var(--ym-controls-color-primary-text-enabled);
-}
-
-.tags-container.overlay-tags-container {
+.tag-container.menu {
   flex-direction: column;
   height: 50vh;
   align-items: flex-start;
@@ -71,7 +12,60 @@
   flex-wrap: nowrap;
 }
 
-.tag.selected {
+
+.tag {
+  --color-tag: var(--ym-controls-color-primary-text-enabled);
+  
+  padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
+  
+  user-select: none;
+  cursor: pointer;
+  white-space: nowrap;
+  
+  border-radius: var(--ym-radius-size-xs);
+  color: var(--color-tag);
+
+  transition: var(--transition);
+}
+
+.tag.tag-selected {
   color: var(--ym-background-color-primary-enabled-popover);
   background-color: var(--color-tag);
 }
+
+
+.menu .tag:hover {
+  background-color: var(--ym-surface-color-primary-enabled-list);
+  color: var(--ym-controls-color-primary-text-enabled_variant);
+}
+
+
+.tag.rap { --color-tag: var(--color-rap); }
+.tag.rock { --color-tag: var(--color-rock); }
+.tag.metal { --color-tag: var(--color-metal); }
+.tag.electronic { --color-tag: var(--color-electronic); }
+.tag.pop { --color-tag: var(--color-pop); }
+.tag.rnb { --color-tag: var(--color-rnb); }
+.tag.folk { --color-tag: var(--color-folk); }
+.tag.classical { --color-tag: var(--color-classical); }
+.tag.alternative { --color-tag: var(--color-alternative); }
+.tag.podcast { --color-tag: var(--color-podcast); }
+.tag.soundtrack { --color-tag: var(--color-soundtrack); }
+.tag.children { --color-tag: var(--color-children); }
+.tag.reggae { --color-tag: var(--color-reggae); }
+.tag.other { --color-tag: var(--ym-controls-color-primary-text-enabled); }
+
+.tag.rap:hover { --color-tag: var(--color-hovered-rap); }
+.tag.rock:hover { --color-tag: var(--color-hovered-rock); }
+.tag.metal:hover { --color-tag: var(--color-hovered-metal); }
+.tag.electronic:hover { --color-tag: var(--color-hovered-electronic); }
+.tag.pop:hover { --color-tag: var(--color-hovered-pop); }
+.tag.rnb:hover { --color-tag: var(--color-hovered-rnb); }
+.tag.folk:hover { --color-tag: var(--color-hovered-folk); }
+.tag.classical:hover { --color-tag: var(--color-hovered-classical); }
+.tag.alternative:hover { --color-tag: var(--color-hovered-alternative); }
+.tag.podcast:hover { --color-tag: var(--color-hovered-podcast); }
+.tag.soundtrack:hover { --color-tag: var(--color-hovered-soundtrack); }
+.tag.children:hover { --color-tag: var(--color-hovered-children); }
+.tag.reggae:hover { --color-tag: var(--color-hovered-reggae); }
+.tag.other:hover { --color-tag: var(--ym-controls-color-primary-text-enabled); }

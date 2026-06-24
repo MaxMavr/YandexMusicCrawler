@@ -1,4 +1,4 @@
-const TAGS_CONTAINER_TEMPLATE = document.getElementById('tags-container-template');
+const TAGS_CONTAINER_TEMPLATE = document.getElementById('tag-container-template');
 const TAG_TEMPLATE = document.getElementById('tag-template');
 
 let genreColors = {};
@@ -37,7 +37,7 @@ function getGenreDisplayName(genreCode) {
 
 export function getTagsContainer() {
     const container = TAGS_CONTAINER_TEMPLATE.content.cloneNode(true);
-    return container.querySelector('.tags-container');
+    return container.querySelector('.tag-container');
 }
 
 export function makeGenreTag(genreCode) {

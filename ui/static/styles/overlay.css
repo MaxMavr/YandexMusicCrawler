@@ -1,36 +1,49 @@
 .overlay {
     position: fixed;
-    z-index: 9999;
+    z-index: 1000;
 }
 
-.info-label {
-    border-radius: var(--ym-radius-size-xs);
+.info-hint {
     padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
-    transition: var(--transition);
-
+    
+    border: var(--ym-layout-border);
+    border-radius: var(--ym-radius-size-xs);
     background-color: var(--ym-background-color-primary-enabled-popover);
-    border: .0625rem solid var(--ym-outline-color-primary-disabled);
     
     pointer-events: none;
     white-space: nowrap;
+    
+    animation: fadeIn 0.2s ease forwards;
 }
 
-.select-tags {
-    background-color: var(--ym-background-color-primary-enabled-popover);
-    border: .0625rem solid var(--ym-outline-color-primary-disabled);
-
+.menu {
     padding: var(--ym-spacer-size-xs);
+    
     border-radius: var(--ym-radius-size-s);
+    border: var(--ym-layout-border);
+    background-color: var(--ym-background-color-primary-enabled-menu);
+    backdrop-filter: var(--ym-menu-filter);
+
+    animation: fadeIn 0.4s ease forwards;
 }
 
-.select-tags {
+.menu {
     overflow-y: scroll;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 
-.select-tags::-webkit-scrollbar {
+.menu::-webkit-scrollbar {
     display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 
@@ -38,18 +51,19 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
     
-    animation: fadeOut 1s ease forwards;
+    width: 100vw;
+    height: 100vh;
+    
+    background: #000;
+    
     animation-delay: 4s;
+    animation: fadeOut 1s ease forwards;
 }
-
 
 #splash-screen video {
     margin: auto;
@@ -58,29 +72,12 @@
 }
 
 @keyframes fadeOut {
-    0% {
+    from {
         opacity: 1;
         pointer-events: auto;
     }
-    100% {
+    to {
         opacity: 0;
         pointer-events: none;
     }
-}
-
-.message {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: var(--ym-spacer-size-xxxl);
-}
-
-.message h3 {
-    font-size: var(--ym-font-size-headline-xs);
-    color: var(--ym-controls-color-primary-text-enabled_variant);
-    margin-block-end: var(--ym-spacer-size-xs);
-}
-
-.message span {
-    font-weight: normal;
 }

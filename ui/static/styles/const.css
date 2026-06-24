@@ -1,30 +1,8 @@
 :root {
-  --header-height: 80px;
-  --header-row: 40px;
-
-  --color-highlight: #000000;
-  --color-primary: #3d3d3d;
-  --color-secondary: #959595;
-
-  --background-color-highlight: #f5f5f5;
-  --background-color-primary: #ffffff;
-  
-  --border-color: #e5e5e5;
-
-  --margin-side: 60px;
-
-  --border: .5px solid;
-
-  --padding-item: 8px 18px;
-  --padding-row: 6px 12px;
-  --padding-tag: 3px 6px;
-  --padding-info-label: 3px 6px;
-  --padding-input: 3px 6px;
-
-  --padding-icon: 8px;
-
   --transition: all 0.3s cubic-bezier(0.75, 0.35, 0.4, 0.99);
-  --border-radius: 6px;
+  --transition-fast: all 0.1s cubic-bezier(0.75, 0.35, 0.4, 0.99);
+
+  --border-loading-radius: 6px;
 
   --color-rise: #51cf66;
   --color-fall: #f84c35;
@@ -43,4 +21,89 @@
   --color-children:    #fde68a;
   --color-podcast:     #9ca3af;
   --color-other:       #cbd5e1;
+
+  --color-hovered-rap:         #1a9949;
+  --color-hovered-reggae:      #339f5b;
+  --color-hovered-rock:        #b43535;
+  --color-hovered-metal:       #6e0d28;
+  --color-hovered-pop:         #a756b4;
+  --color-hovered-rnb:         #b18618;
+  --color-hovered-folk:        #58a273;
+  --color-hovered-electronic:  #4172ad;
+  --color-hovered-classical:   #6d77a8;
+  --color-hovered-alternative: #2756a1;
+  --color-hovered-soundtrack:  #24926a;
+  --color-hovered-children:    #b4a360;
+  --color-hovered-podcast:     #636870;
+  --color-hovered-other:       #8b929b;
+}
+
+:root {
+  --ym-font-heading: "YSMusic Headline", Roboto, Arial, sans-serif;
+  --ym-font-text: "YS Text", Roboto, Arial, sans-serif;
+
+
+  --ym-outline-color-primary-disabled: hsla(0, 0%, 100%, .04);
+  --ym-background-color-primary-enabled-content: #121212;
+  --ym-radius-size-xxxl: 6.25rem;
+
+  --average-color-background: rgba(30, 30, 30, 0.7);
+  --ym-background-color-secondary-enabled-blur: #3d3d3d;
+
+  --ym-controls-color-secondary-outline-hovered_stroke: grey;
+  --ym-controls-color-secondary-outline-selected_stroke: #e6e6e6;
+  --ym-controls-color-secondary-default-enabled: hsla(0, 0%, 100%, .08);
+
+  --ym-font-size-headline-xs: 1.25rem;
+  --ym-font-size-label-m: 0.875rem;
+  --ym-font-size-headline-m: 1.5rem;
+  
+  --ym-spacer-size-m: 0.75rem;
+
+  --ym-spacer-size-xxxs: 0.25rem;
+  --ym-spacer-size-xxs: 0.375rem;
+  --ym-spacer-size-xs: 0.5rem;
+  --ym-spacer-size-s: 0.625rem;
+
+  --ym-spacer-size-xxxl: 2rem;
+  --ym-spacer-size-xxl: 1.5rem;
+  --ym-spacer-size-xl: 1.25rem;
+  
+
+  --ym-font-size-headline-xl: 2rem;
+
+  --ym-radius-size-xl: 1rem;
+  --ym-radius-size-s: 0.375rem;
+  --ym-radius-size-xs: 0.25rem;
+
+  --ym-font-weight-medium: 500;
+
+  --ym-duration-transition: 0.3s;
+  --ym-surface-color-primary-enabled-list: hsla(0, 0%, 100%, .08);
+  --ym-controls-color-secondary-outline-enabled_stroke: #4d4d4d;
+  --ym-background-color-primary-enabled-basic: #000;
+  --ym-controls-color-primary-text-enabled: hsla(0, 0%, 100%, .5);
+  --ym-controls-color-primary-text-enabled_variant: #e6e6e6;
+  --ym-controls-color-primary-on_default-enabled: #000;
+  --ym-controls-color-primary-default-enabled: #7CEE00; /*#ff0;*/
+  --ym-controls-color-primary-default-hovered: #61B500; /*#dada0b;*/
+  --ym-controls-color-secondary-on_outline-enabled: #e6e6e6;
+  --ym-controls-color-secondary-outline-enabled_stroke: #4d4d4d;
+  --ym-background-color-primary-enabled-popover: #1a1a1a;
+  --ym-controls-color-secondary-on_default-enabled: #e6e6e6;
+
+  --ym-background-color-primary-enabled-menu: rgba(0, 0, 0, .7);
+
+  --ym-controls-color-secondary-default-disabled: hsla(0, 0%, 100%, .08);
+  --ym-controls-color-secondary-on_default-disabled: hsla(0, 0%, 100%, .24);
+  --ym-controls-color-secondary-default-hovered: hsla(0, 0%, 100%, .12);
+  --ym-background-color-primary-enabled-shimmer: linear-gradient(90deg, rgba(41, 41, 41, .5) 40%, rgba(94, 94, 94, .3) 50%, rgba(41, 41, 41, .5) 60%);
+
+  --ym-layout-border: 0.0625rem solid var(--ym-outline-color-primary-disabled);
+  --ym-input-border: .0625rem solid var(--ym-controls-color-secondary-outline-enabled_stroke);
+  --ym-layout-border-radius: var(--ym-radius-size-xl);
+  --ym-layout-background-color: var(--ym-background-color-primary-enabled-content);
+
+  --ym-menu-filter: blur(.875rem);
+  --ym-filter: blur(.875rem);
 }

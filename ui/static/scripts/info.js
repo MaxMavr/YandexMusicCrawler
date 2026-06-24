@@ -1,5 +1,5 @@
-const INFO_LABEL_TEMPLATE = document.getElementById('info-label-template');
-const HOVER_DELAY = 1000;
+const INFO_LABEL_TEMPLATE = document.getElementById('info-hint-template');
+const HOVER_DELAY = 750;
 const INFO_LABEL_OFFSET = 10;
 
 let hoverTimeout = null;
@@ -14,7 +14,7 @@ document.addEventListener('mousemove', function(event) {
 
 
 export function setupInfoLabelButton(element, text) {
-    element.classList.add('info-label-button');
+    element.classList.add('info-hint-button');
     if (text !== undefined && text !== null) {
         element.dataset.text = text;
     }
@@ -23,7 +23,7 @@ export function setupInfoLabelButton(element, text) {
 }
 
 export function initInfoLabelButtons(context = document) { 
-    const infoLabelButtons = context.querySelectorAll('.info-label-button'); 
+    const infoLabelButtons = context.querySelectorAll('.info-hint-button'); 
 
     infoLabelButtons.forEach(button => {
         button.addEventListener('mouseenter', function(event) {
@@ -52,7 +52,7 @@ function handleInfoLabel(button) {
     const text = button.dataset.text;
 
     const infoLabel = INFO_LABEL_TEMPLATE.content.cloneNode(true);
-    const element = infoLabel.querySelector('.info-label');
+    const element = infoLabel.querySelector('.info-hint');
     document.body.appendChild(element);
     element.textContent = text;
 

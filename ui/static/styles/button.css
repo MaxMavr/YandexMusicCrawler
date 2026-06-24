@@ -1,58 +1,69 @@
 .button-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--ym-spacer-size-xxxs);
+  gap: var(--ym-spacer-size-m);
+  align-items: center;
 }
+
 
 .button {
   display: flex;
   align-items: center;
   gap: var(--ym-spacer-size-xxs);
-  padding: var(--ym-spacer-size-xl) var(--ym-spacer-size-s);
+  
+  padding: var(--ym-spacer-size-s) var(--ym-spacer-size-xl);
+  color: var(--ym-controls-color-primary-on_default-enabled);
+  background-color: var(--ym-controls-color-primary-default-enabled);
+  border-radius: var(--ym-radius-size-xxxl);
 
-  font-weight: var(--ym-font-weight-bold);
-  color: var(--ym-color-black);
   white-space: nowrap;
   text-decoration: none;
-  
-  background-color: var(--ym-color-primary);
-  border-radius: var(--ym-radius-size-xxxl);
   cursor: pointer;
-  transition: var(--transition);
   user-select: none;
+
+  transition: var(--transition);
 }
 
 .button:hover:not(:active) {
-  background-color: var(--ym-color-primary-hover);
+  background-color: var(--ym-controls-color-primary-default-hovered);
 }
 
 .button:active {
   transition: var(--transition-fast);
-  background-color: var(--ym-color-primary);
+  background-color: var(--ym-controls-color-primary-default-enabled);
+}
+
+
+.button.button-secondary {
+  background-color: var(--ym-controls-color-secondary-default-enabled);
+  color: var(--ym-controls-color-secondary-on_default-enabled);
+}
+
+.button.button-secondary:hover:not(:active) {
+  background-color: var(--ym-controls-color-secondary-default-hovered);
+}
+
+.button.button-secondary:active {
+  background-color: var(--ym-controls-color-secondary-default-enabled);
 }
 
 
 .button.ghost-button {
   padding: 0;
-  font-weight: normal;
   background-color: transparent;
+  color: inherit;
 }
 
 .button.ghost-button:hover,
 .button.ghost-button:active {
   background-color: transparent;
+  color: var(--ym-controls-color-primary-text-enabled_variant);
 }
 
 
-.button-icon {
-  padding: var(--padding-icon);
-  height: 100%;
-
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
+.button:disabled {
+  background: var(--ym-controls-color-secondary-default-disabled);
+  color: var(--ym-controls-color-secondary-on_default-disabled);
 }
+
 
 .icon {
   flex-shrink: 0;
@@ -61,4 +72,14 @@
   aspect-ratio: 1;
   vertical-align: middle;
   pointer-events: none;
+}
+
+.button-icon {
+  padding: var(--ym-spacer-size-s);
+  height: 100%;
+
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
 }
