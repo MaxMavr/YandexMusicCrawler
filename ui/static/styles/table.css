@@ -37,6 +37,12 @@
 #table-head {
   align-items: start;
   background-color: transparent;
+  margin-block-start: var(--ym-spacer-size-xxl);
+}
+
+#table-head .number-cell {
+  flex-direction: column;
+  align-items: normal;
 }
 
 .cell-title {
@@ -112,6 +118,8 @@
 }
 
 .number-cell {
+  align-items: center;
+  flex-wrap: nowrap;
   gap: var(--ym-spacer-size-xxxs);
 }
 
@@ -125,7 +133,7 @@
 
 .artist-name {
   min-height: 18px;
-  min-width: 140px;
+  min-width: 120px;
 }
 
 .loading .number-label {
@@ -133,6 +141,7 @@
   min-width: 70px;
 }
 
+.loading .table-tags,
 .loading .tag-cell {
   min-height: 24px;
 }
@@ -193,6 +202,10 @@
     width: 100%;
   }
 
+  .name-cell:hover .artist-cover {
+    transform: scale(1);
+  }
+
   /* .artist-cover::after {
     content: '';
     position: absolute;
@@ -204,6 +217,10 @@
     pointer-events: none;
   } */
 
+  .loading .table-tags {
+    min-width: 160px;
+  }
+
   .table-tags {
     display: flex;
     justify-content: center;
@@ -211,6 +228,9 @@
 
   .table-secondary-values {
     display: flex;
+    gap: var(--ym-spacer-size-xs);
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .tag-cell {
@@ -221,7 +241,7 @@
     display: contents;
   }
 
-  .listeners-cell {
+  #table-body .listeners-cell {
     background-color: var(--ym-controls-color-secondary-default-enabled);
     color: var(--ym-controls-color-secondary-on_default-enabled);
     padding: var(--ym-spacer-size-xxxs) var(--ym-spacer-size-xs);
@@ -234,11 +254,6 @@
     align-items: center;
     gap: var(--ym-spacer-size-s);
   }
-
-  .table-secondary-values {
-    gap: var(--ym-spacer-size-xs);
-  }
-  
 
   .row-number {
     display: none;

@@ -74,7 +74,6 @@ header {
 
     row-gap: var(--ym-spacer-size-m);
     column-gap: var(--ym-spacer-size-xxl);
-    margin-block-end: var(--ym-spacer-size-xxl);
 }
 
 

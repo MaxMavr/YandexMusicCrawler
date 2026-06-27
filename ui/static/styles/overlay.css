@@ -57,7 +57,15 @@
 
 @media (max-width: 1200px) {
     .menu {
-        border-radius: var(--ym-radius-size-s) var(--ym-radius-size-s) 0 0;
+        margin: var(--ym-spacer-size-m) var(--ym-spacer-size-m) var(--ym-spacer-size-m) 0;
+        border-radius: var(--ym-layout-border-radius);
+    }
+}
+
+@media (max-width: 800px) {
+    .menu {
+        margin: 0;
+        border-radius: var(--ym-layout-border-radius) var(--ym-layout-border-radius) 0 0;
     }
 }
 
