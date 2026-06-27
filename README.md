@@ -17,9 +17,9 @@
 Не знаете, с чего начать — жмите на «Случайный артист». Любой исполнитель открывается в Яндекс
 Музыке в один клик.
 
-Откройте новое — *[ymc.kfprod.ru](https://ymc.kfprod.ru)*
+Откройте новое — *[ymc.kfprod.ru](https://ymc.kfprod.ru)
 
----
+<img width="1000" height="1000" alt="290t5b1uqg541" src="https://github.com/user-attachments/assets/eef9b33f-ef8c-453e-ae53-bca4c7a68d53" />
 
 ## Запуск у себя
 
