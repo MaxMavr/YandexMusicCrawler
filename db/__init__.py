@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 import psycopg
-from psycopg import Cursor
 from psycopg.rows import dict_row
 
 from config import RepositoryConfig
@@ -13,36 +12,6 @@ VALID_SORT_FIELDS = [
     "tracks_count", "likes_count", "ratings_month",
     "is_available", "is_listened"
 ]
-
-
-def _update_artist_relations(cur: Cursor, artist_id: int, genres: list[str], countries: list[str]) -> None:
-    unique_genres = list(set(genres)) if genres else []
-    unique_countries = list(set(countries)) if countries else []
-
-    if unique_genres:
-        cur.executemany(
-            "INSERT INTO genres (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
-            [(g,) for g in unique_genres]
-        )
-
-        cur.execute("""
-            INSERT INTO artist_genres (artist_id, genre_id)
-            SELECT %s, id FROM genres WHERE name = ANY(%s)
-            ON CONFLICT DO NOTHING
-        """, (artist_id, unique_genres))
-
-    if unique_countries:
-        cur.executemany(
-            "INSERT INTO countries (name) VALUES (%s) ON CONFLICT (name) DO NOTHING",
-            [(c,) for c in unique_countries]
-        )
-
-        cur.execute("""
-            INSERT INTO artist_countries (artist_id, country_id)
-            SELECT %s, id FROM countries WHERE name = ANY(%s)
-            ON CONFLICT DO NOTHING
-        """, (artist_id, unique_countries))
-
 
 FILTER_MAP = {
     "is_available": ("a.is_available = %s", bool),
@@ -232,7 +201,6 @@ class Repository:
                     CREATE INDEX IF NOT EXISTS idx_artists_name_trgm
                     ON artists USING gin (name gin_trgm_ops);
                 """)
-            conn.commit()
 
     def upsert_artist(self, artist: ArtistRecord) -> None:
         with self._connect() as conn:
@@ -275,12 +243,76 @@ class Repository:
                     False,
                 ))
 
-                cur.execute("DELETE FROM artist_genres WHERE artist_id = %s", (artist.id,))
-                cur.execute("DELETE FROM artist_countries WHERE artist_id = %s", (artist.id,))
+                unique_genres = list(set(artist.genres)) if artist.genres else []
+                unique_countries = list(set(artist.countries)) if artist.countries else []
 
-                _update_artist_relations(cur, artist.id, artist.genres, artist.countries)
+                if unique_genres:
+                    cur.executemany(
+                        """
+                        INSERT INTO genres (name)
+                        VALUES (%s)
+                        ON CONFLICT (name) DO NOTHING
+                        """,
+                        [(g,) for g in unique_genres]
+                    )
 
-                conn.commit()
+                    cur.execute("""
+                        DELETE FROM artist_genres
+                        WHERE artist_id = %s
+                          AND genre_id NOT IN (
+                              SELECT id
+                              FROM genres
+                              WHERE name = ANY(%s)
+                          )
+                    """, (artist.id, unique_genres))
+
+                    cur.execute("""
+                        INSERT INTO artist_genres (artist_id, genre_id)
+                        SELECT %s, id
+                        FROM genres
+                        WHERE name = ANY(%s)
+                        ON CONFLICT DO NOTHING
+                    """, (artist.id, unique_genres))
+
+                else:
+                    cur.execute(
+                        "DELETE FROM artist_genres WHERE artist_id = %s",
+                        (artist.id,)
+                    )
+
+                if unique_countries:
+                    cur.executemany(
+                        """
+                        INSERT INTO countries (name)
+                        VALUES (%s)
+                        ON CONFLICT (name) DO NOTHING
+                        """,
+                        [(c,) for c in unique_countries]
+                    )
+
+                    cur.execute("""
+                        DELETE FROM artist_countries
+                        WHERE artist_id = %s
+                          AND country_id NOT IN (
+                              SELECT id
+                              FROM countries
+                              WHERE name = ANY(%s)
+                          )
+                    """, (artist.id, unique_countries))
+
+                    cur.execute("""
+                        INSERT INTO artist_countries (artist_id, country_id)
+                        SELECT %s, id
+                        FROM countries
+                        WHERE name = ANY(%s)
+                        ON CONFLICT DO NOTHING
+                    """, (artist.id, unique_countries))
+
+                else:
+                    cur.execute(
+                        "DELETE FROM artist_countries WHERE artist_id = %s",
+                        (artist.id,)
+                    )
 
     def get_to_update_artists_count(self, delta_time: timedelta) -> int:
         with self._connect() as conn:
